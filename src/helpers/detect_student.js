@@ -8,8 +8,8 @@ const CURRENT_LOGGED_IN_USER = '1066359';
 
 const config = { url: 'lab.intec',
                baseDN: 'dc=lab,dc=intec',
-               username: 'angelo.paredes@intecadm',
-               password: process.env.ANGELO_PASSWORD }
+               username: process.env.AD_USER,
+               password: process.env.AD_PASSWORD }
 
 const ad = new ActiveDirectory(config);
 ad.findUser(CURRENT_LOGGED_IN_USER, function(err, user) {
