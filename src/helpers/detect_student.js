@@ -1,9 +1,19 @@
 const ActiveDirectory = require('activedirectory');
+const os = require('os');
+const path = require('path');
 
 require('dotenv').config();
 
+console.log('>>>>> WINDOW USER LOGGED IN:');
+console.log('Domain: ', process.env.USERDOMAIN);
+console.log('username: ', process.env.USERNAME);
+console.log('username', process.env['USERPROFILE']);
+console.log('hostname:', os.hostname());
+console.log('User info', JSON.stringify(os.userInfo()));
+console.log('>>>>> WINDOW USER LOGGED IN END >>>>>');
+
 // process.env.AD_USER.substr(0, process.env.AD_USER.indexOf('@'));
-const CURRENT_LOGGED_IN_USER = "1066359";
+const CURRENT_LOGGED_IN_USER = "1066359@intec";
 console.log('username: ', CURRENT_LOGGED_IN_USER);
 
 console.log('Credentials for AD are: ', process.env.AD_USER, process.env.AD_PASSWORD);

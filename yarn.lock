@@ -1444,7 +1444,7 @@ ldap-filter@0.2.2:
   dependencies:
     assert-plus "0.1.5"
 
-"ldapjs@>= 0.7.1":
+"ldapjs@>= 0.7.1", ldapjs@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/ldapjs/-/ldapjs-1.0.2.tgz#544ff7032b7b83c68f0701328d9297aa694340f9"
   integrity sha1-VE/3Ayt7g8aPBwEyjZKXqmlDQPk=
