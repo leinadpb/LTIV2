@@ -19,7 +19,7 @@ const config = { url: 'ldap://lab.intec',
               }
 
 const ad = new ActiveDirectory(config);
-ad.findUser(CURRENT_LOGGED_IN_USER, function(err, user) {
+ad.findUser('userPrincipalName=1066359@intec', function(err, user) {
   if (err) {
     console.log('ERROR: ' +JSON.stringify(err));
     return;
