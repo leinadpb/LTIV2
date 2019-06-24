@@ -2,7 +2,8 @@ const ActiveDirectory = require('activedirectory');
 
 require('dotenv').config();
 
-const CURRENT_LOGGED_IN_USER = process.env.AD_USER.substr(0, process.env.AD_USER.indexOf('@'));
+// process.env.AD_USER.substr(0, process.env.AD_USER.indexOf('@'));
+const CURRENT_LOGGED_IN_USER = "1066359";
 console.log('username: ', CURRENT_LOGGED_IN_USER);
 
 console.log('Credentials for AD are: ', process.env.AD_USER, process.env.AD_PASSWORD);
@@ -10,7 +11,12 @@ console.log('Credentials for AD are: ', process.env.AD_USER, process.env.AD_PASS
 const config = { url: 'ldap://lab.intec',
                baseDN: 'dc=lab,dc=intec',
                username: process.env.AD_USER,
-               password: process.env.AD_PASSWORD }
+               password: process.env.AD_PASSWORD,
+               attributes: {
+                  user: [ 'name', 'mail', 'userPrinicipalName' ],
+                  group: [ 'objectCategory' ]
+                } 
+              }
 
 const ad = new ActiveDirectory(config);
 ad.findUser(CURRENT_LOGGED_IN_USER, function(err, user) {
