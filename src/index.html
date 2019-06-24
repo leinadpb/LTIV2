@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="./style/index.css" />
+    <link rel="stylesheet" href="./style/rules.css" />
+  </head>
+  <body>
+    <div class="app-wrapper">
+      <div class="header">
+        <h2>Welcome to the app!</h2>
+      </div>
+      <div class="content">
+        <span>
+          Testing text only!!
+        </span>
+      </div>
+      <div class="footer">
+        <span id="username">
+          
+        </span>
+      </div>
+    </div>
+    <script>
+      document.getElementById("username").innerHMTL = require("os").userInfo().username;
+    </script>
+  </body>
+</html>

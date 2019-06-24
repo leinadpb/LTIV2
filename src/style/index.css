@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box !important;
+}
+
+@font-face {
+  font-family: "Open Sans Pro";
+  src: url("../fonts/Source_Sans_Pro/SourceSansPro-SemiBold.ttf");
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  src: url("../fonts/Open_Sans/OpenSans-Regular.ttf");
+  font-style: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Source Sans Pro', sans-serif !important;
+}
+
+span {
+  font-family: 'Open Sans', sans-serif !important;
+}
+
