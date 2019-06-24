@@ -2,7 +2,7 @@ const ActiveDirectory = require('activedirectory');
 
 require('dotenv').config();
 
-console.log(process.env.ANGELO_PASSWORD);
+console.log('Credentials for AD are: ', process.env.AD_USER, process.env.AD_PASSWORD);
 
 const CURRENT_LOGGED_IN_USER = '1066359';
 
