@@ -19,7 +19,7 @@ ad.findUser(CURRENT_LOGGED_IN_USER, function(err, user) {
   }
  
   if (!user) {
-    console.log('User: ' + sAMAccountName + ' not found.')
+    console.log('User: ' + CURRENT_LOGGED_IN_USER + ' not found.')
     return null;
   } else {
     return JSON.stringify(user);
