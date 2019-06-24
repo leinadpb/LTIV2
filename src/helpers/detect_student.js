@@ -6,7 +6,7 @@ console.log('Credentials for AD are: ', process.env.AD_USER, process.env.AD_PASS
 
 const CURRENT_LOGGED_IN_USER = '1066359';
 
-const config = { url: 'lab.intec',
+const config = { url: 'ldap://lab.intec',
                baseDN: 'dc=lab,dc=intec',
                username: process.env.AD_USER,
                password: process.env.AD_PASSWORD }
