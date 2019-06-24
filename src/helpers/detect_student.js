@@ -4,7 +4,7 @@ require('dotenv').config();
 
 console.log('Credentials for AD are: ', process.env.AD_USER, process.env.AD_PASSWORD);
 
-const CURRENT_LOGGED_IN_USER = '1066359';
+const CURRENT_LOGGED_IN_USER = '1066359@intec';
 
 const config = { url: 'ldap://lab.intec',
                baseDN: 'dc=lab,dc=intec',
