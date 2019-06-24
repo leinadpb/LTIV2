@@ -25,8 +25,10 @@ ad.findUser(CURRENT_LOGGED_IN_USER, function(err, user) {
     return;
   }
  
+  console.log('user obj: ', user);
+  console.log('err obj: ', err);
   if (!user) {
-    console.log('User: ' + CURRENT_LOGGED_IN_USER + ' not found.')
+    console.log('User: ' + CURRENT_LOGGED_IN_USER + ' not found.');
     return null;
   } else {
     return JSON.stringify(user);
