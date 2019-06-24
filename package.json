@@ -44,6 +44,7 @@
   "dependencies": {
     "activedirectory": "^0.7.2",
     "current-processes": "^0.2.1",
+    "dotenv": "^8.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "lodash": "^4.17.11"
   },
