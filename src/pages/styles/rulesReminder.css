@@ -1,0 +1,40 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.container{
+    width: 100%;
+    background: #f2f2f2;
+    box-shadow: 1px 1px 30px -5px #888888;
+
+}
+
+
+.card-img {
+    margin: 44px;
+    padding: 45px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.img{padding: 45px;}
+
+.btn {
+    width: 10%;
+    border:none;
+    padding: 12px;
+    color: white;
+    margin: 16px 0;
+    font-size: 16px;
+     outline: none;
+    background: #EB2710;
+  border-radius: 20px;
+  position: relative;
+  left:  850px;
+
+}
+.btn:hover{
+    background: #C13726;
+    
+}
