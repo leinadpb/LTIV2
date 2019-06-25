@@ -5,6 +5,7 @@ const settings = require('./settings');
 const mongoose = require('mongoose');
 const queries = require('./db/queries');
 const os = require('os');
+const path = require('path');
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -27,7 +28,19 @@ const showSurvey = (url) => {
 }
 
 const showReminder = () => {
-  console.log('Show Reminder window');
+  window = new BrowserWindow({
+    width: 1100,
+    height: 500,
+    webPreferences: {
+      nodeIntegration: true
+    },
+    alwaysOnTop: true,
+    frame: false
+  });
+  window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.reminderPage}.html`));
+  window.on('close', () => {
+    console.log('You have closed the window');
+  })
 }
 
 const showRules = (username, trimester) => {
@@ -36,47 +49,50 @@ const showRules = (username, trimester) => {
 
 app.on('ready', async () => {
 
-  // connect to DB
-  require('./helpers/connect_db')
-  // Seed data if needed
-  require('./db/seed');
-  // get configs
-  const configs = await queries.getConfigs();
-  // get trimestres
-  const trimesters = await queries.getTrimesters();
-  // get user info
-  let userDomain = process.env.USERDOMAIN || "intec";
-  let userName = process.env.USERNAME || os.userInfo().username || "1066359"; // TEST
+  // For angelo rapid developemnt
+  showReminder();
 
-  const currentTrimester = await queries.getCurrentTrimester();
+  // // connect to DB
+  // require('./helpers/connect_db')
+  // // Seed data if needed
+  // require('./db/seed');
+  // // get configs
+  // const configs = await queries.getConfigs();
+  // // get trimestres
+  // const trimesters = await queries.getTrimesters();
+  // // get user info
+  // let userDomain = process.env.USERDOMAIN || "intec";
+  // let userName = process.env.USERNAME || os.userInfo().username || "1066359"; // TEST
 
-  const APP_PREFERENCES = {
-    fullscreen: configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value,
-    showSurvey: configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value,
-    studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
-    teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
-  }
+  // const currentTrimester = await queries.getCurrentTrimester();
 
-  const STUDENTS = await queries.getStudentInCurrentTrimester(currentTrimester[0]);
-  const CURRENT_STUDENT = STUDENTS[0];
+  // const APP_PREFERENCES = {
+  //   fullscreen: configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value,
+  //   showSurvey: configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value,
+  //   studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
+  //   teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
+  // }
 
-  if (!CURRENT_STUDENT) {
-    console.log(CURRENT_STUDENT);
-    await queries.addStudent({
-      name: userName,
-      intecId: userName,
-      fullName: userName,
-      computer: os.hostname(),
-      room: '',
-      createdAt: Date.now(),
-      subject: '',
-      trimesterName: currentTrimester[0].name,
-      domain: userDomain
-    });
-    showRules(userName, currentTrimester[0]);
-  } else {
-    showReminder();
-  }
+  // const STUDENTS = await queries.getStudentInCurrentTrimester(currentTrimester[0]);
+  // const CURRENT_STUDENT = STUDENTS[0];
+
+  // if (!CURRENT_STUDENT) {
+  //   console.log(CURRENT_STUDENT);
+  //   await queries.addStudent({
+  //     name: userName,
+  //     intecId: userName,
+  //     fullName: userName,
+  //     computer: os.hostname(),
+  //     room: '',
+  //     createdAt: Date.now(),
+  //     subject: '',
+  //     trimesterName: currentTrimester[0].name,
+  //     domain: userDomain
+  //   });
+  //   showRules(userName, currentTrimester[0]);
+  // } else {
+  //   showReminder();
+  // }
 
   // TODO: Move this code to execute AFTER ONE OF
   // THE PREVIOUS WINDOWAS ARE CLOSED....
