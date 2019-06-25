@@ -27,8 +27,14 @@
     </div>
 
 <script>
- let btn =  document.getElementById('btn');
- console.log(btn);
+  let btn =  document.getElementById('btn');
+  let container = document.getElementById('container');
+    
+    btn.addEventListener('click', ()=>{
+        console.log("haz dado click");
+        container.style.display = "none";
+    })
+   
 </script>
 
 </body>
