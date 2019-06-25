@@ -35,7 +35,7 @@ const showReminder = () => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: false
+    frame: true
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.reminderPage}.html`));
   window.on('close', () => {
