@@ -47,7 +47,9 @@
     "dotenv": "^8.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "ldapjs": "^1.0.2",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "mongoose": "^5.6.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "6.0.0-beta.39",

@@ -1,72 +1,108 @@
 const { app, BrowserWindow } = require('electron');
 const killBrowsers = require('./helpers/kill_browsers');
 const test = require('./helpers/test_helper');
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
+const settings = require('./settings');
+const mongoose = require('mongoose');
+const queries = require('./db/queries');
+const os = require('os');
+
+if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
+require('dotenv').config();
 
-const createWindow = () => {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    fullscreen: true,
-    alwaysOnTop: true
-  });
-
-  // and load the index.html of the app.
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
-  // Emitted when the window is closed.
-  mainWindow.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-  });
-};
-
+let window;
+let jobs;
+let width = 800;
+let height = 600;
 
 const executeJobs = () => {
   killBrowsers.execute();
   test.execute();
 }
 
+const showSurvey = (url) => {
+  console.log('Show survey: ', url);
+}
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', () => {
-  createWindow();
-  setInterval(() => {
-    executeJobs();
-  }, 5000);
+const showReminder = () => {
+  console.log('Show Reminder window');
+}
+
+const showRules = (username, trimester) => {
+  console.log('Will show rules to user');
+}
+
+app.on('ready', async () => {
+
+  // connect to DB
+  require('./helpers/connect_db')
+  // Seed data if needed
+  require('./db/seed');
+  // get configs
+  const configs = await queries.getConfigs();
+  // get trimestres
+  const trimesters = await queries.getTrimesters();
+  // get user info
+  let userDomain = process.env.USERDOMAIN || "intec";
+  let userName = process.env.USERNAME || os.userInfo().username || "1066359"; // TEST
+
+  const currentTrimester = await queries.getCurrentTrimester();
+
+  const APP_PREFERENCES = {
+    fullscreen: configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value,
+    showSurvey: configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value,
+    studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
+    teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
+  }
+
+  const STUDENTS = await queries.getStudentInCurrentTrimester(currentTrimester[0]);
+  const CURRENT_STUDENT = STUDENTS[0];
+
+  if (!CURRENT_STUDENT) {
+    console.log(CURRENT_STUDENT);
+    await queries.addStudent({
+      name: userName,
+      intecId: userName,
+      fullName: userName,
+      computer: os.hostname(),
+      room: '',
+      createdAt: Date.now(),
+      subject: '',
+      trimesterName: currentTrimester[0].name,
+      domain: userDomain
+    });
+    showRules(userName, currentTrimester[0]);
+  } else {
+    showReminder();
+  }
+
+  // TODO: Move this code to execute AFTER ONE OF
+  // THE PREVIOUS WINDOWAS ARE CLOSED....
+  // if (APP_PREFERENCES.showSurvey) {
+  //   if (userDomain === "intec") {
+  //     showSurvey(APP_PREFERENCES.studentUrl);
+  //   } else {
+  //     showSurvey(APP_PREFERENCES.teacherUrl);
+  //   }
+  // }
+
+  // Execute this code to Close any browser. So user first completes this process and then,
+  //  can use the computer.
+  // jobs = setInterval(() => {
+  //   executeJobs();
+  // }, 5000);
 });
 
-// Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
 app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow();
+  if (window === null) {
+    createWindow(settings.PAGES.startPage, true);
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
