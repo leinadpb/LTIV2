@@ -66,14 +66,14 @@ const showReminder = (userDomain, APP_PREFERENCES) => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: true,
+    frame: false,
     resizable: false
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.reminderPage}.html`));
   // window.webContents.openDevTools();
   window.on('close', () => {
     console.log('You have closed reminder window');
-    showSurveyOrClose(userDomain, APP_PREFERENCES);
+    // showSurveyOrClose(userDomain, APP_PREFERENCES);
   })
 }
 
@@ -110,36 +110,39 @@ const showRules = async (username, trimester, userDomain, APP_PREFERENCES) => {
 
 app.on('ready', async () => {
 
-  // connect to DB
-  require('./helpers/connect_db')
-  // Seed data if needed
-  require('./db/seed');
-  // get configs
-  const configs = await queries.getConfigs();
-  // get trimestres
-  const trimesters = await queries.getTrimesters();
-  // get user info
-  let userDomain = process.env.USERDOMAIN || "intec";
-  let userName = process.env.USERNAME || os.userInfo().username || "1066359"; // TEST
+  showReminder(null);
+  
 
-  const currentTrimester = await queries.getCurrentTrimester();
+  // // connect to DB
+  // require('./helpers/connect_db')
+  // // Seed data if needed
+  // require('./db/seed');
+  // // get configs
+  // const configs = await queries.getConfigs();
+  // // get trimestres
+  // const trimesters = await queries.getTrimesters();
+  // // get user info
+  // let userDomain = process.env.USERDOMAIN || "intec";
+  // let userName = process.env.USERNAME || os.userInfo().username || "1066359"; // TEST
 
-  const APP_PREFERENCES = {
-    fullscreen: configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value,
-    showSurvey: configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value,
-    studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
-    teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
-  }
+  // const currentTrimester = await queries.getCurrentTrimester();
 
-  const STUDENTS = await queries.getStudentInCurrentTrimester(currentTrimester[0]);
-  const CURRENT_STUDENT = STUDENTS[0];
+  // const APP_PREFERENCES = {
+  //   fullscreen: configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value,
+  //   showSurvey: configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value,
+  //   studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
+  //   teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
+  // }
 
-  if (!CURRENT_STUDENT) {
-    console.log(CURRENT_STUDENT);
-    showRules(userName, currentTrimester[0], userDomain, APP_PREFERENCES);
-  } else {
-    showReminder(APP_PREFERENCES);
-  }
+  // const STUDENTS = await queries.getStudentInCurrentTrimester(currentTrimester[0]);
+  // const CURRENT_STUDENT = STUDENTS[0];
+
+  // if (!CURRENT_STUDENT) {
+  //   console.log(CURRENT_STUDENT);
+  //   showRules(userName, currentTrimester[0], userDomain, APP_PREFERENCES);
+  // } else {
+  //   showReminder(APP_PREFERENCES);
+  // }
   
   // Execute this code to Close any browser. So user first completes this process and then,
   //  can use the computer.

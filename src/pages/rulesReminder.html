@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    
     <title>reglamento</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
     <link rel="stylesheet" href="styles/rulesReminder.css">
@@ -30,10 +29,12 @@
   let btn =  document.getElementById('btn');
   let container = document.getElementById('container');
     
-    btn.addEventListener('click', ()=>{
+    btn.addEventListener('click', () => {
         console.log("haz dado click");
-        container.style.display = "none";
-    })
+
+        // container.style.display = "none"; 
+      window.close();
+    });
    
 </script>
 
