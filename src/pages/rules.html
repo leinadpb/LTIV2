@@ -2,9 +2,39 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Rules - LABTI</title>
+    <link rel="stylesheet" href="../style/index.css" />
+    <style>
+      .page-wrapper {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
   </head>
   <body>
-    
+    <div class="page-wrapper">
+      Rules here...
+      <button onClick="acceptRules()">Accept</button>
+    </div>
+    <script>
+      let windowData = undefined;
+      const ipcRenderer = require('electron').ipcRenderer;
+
+      const acceptRules = () => {
+        if (!!windowData) {
+          ipcRenderer.send('add-student-to-history', { userName:  windowData.user.username, userDomain: windowData.user.domain, trimester: windowData.trimester });
+        } else {
+          console.log('WindowData not defined');
+        }
+      }
+
+      ipcRenderer.on('rules-window-data', (event, args) => {
+        windowData = args;
+      });
+      
+    </script>
   </body>
 </html>
