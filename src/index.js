@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, electron } = require('electron');
 const killBrowsers = require('./helpers/kill_browsers');
 const test = require('./helpers/test_helper');
 const settings = require('./settings');
@@ -42,7 +42,7 @@ const showSurvey = (url) => {
   })
 }
 
-const showSurveyOrClose = (APP_PREFERENCES) => {
+const showSurveyOrClose = (APP_PREFERENCES, userDomain) => {
   // TODO: Move this code to execute AFTER ONE OF
   // THE PREVIOUS WINDOWAS ARE CLOSED....
   if (APP_PREFERENCES.showSurvey) {
@@ -56,7 +56,7 @@ const showSurveyOrClose = (APP_PREFERENCES) => {
   }
 }
 
-const showReminder = (APP_PREFERENCES) => {
+const showReminder = (userDomain, APP_PREFERENCES) => {
   window = new BrowserWindow({
     width: 1100,
     height: 500,
@@ -71,11 +71,11 @@ const showReminder = (APP_PREFERENCES) => {
   window.webContents.openDevTools();
   window.on('close', () => {
     console.log('You have closed reminder window');
-    showSurveyOrClose(APP_PREFERENCES);
+    showSurveyOrClose(userDomain, APP_PREFERENCES);
   })
 }
 
-const showRules = async (username, trimester, APP_PREFERENCES) => {
+const showRules = async (username, trimester, userDomain, APP_PREFERENCES) => {
   const RULES = await queries.getRules();
   window = new BrowserWindow({
     width: 1100,
@@ -88,13 +88,22 @@ const showRules = async (username, trimester, APP_PREFERENCES) => {
     resizable: false,
     fullscreen: true
   });
-  window.labRules = RULES;
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.rulesPage}.html`));
   window.webContents.openDevTools();
   window.on('close', () => {
     console.log('You have closed rules window');
-    showSurveyOrClose(APP_PREFERENCES);
-  })
+    showSurveyOrClose(userDomain, APP_PREFERENCES);
+  });
+  setTimeout(() => {
+    window.webContents.send('rules-window-data', {
+      rules: RULES,
+      user: {
+        username: username,
+        domain: userDomain
+      },
+      trimester: trimester
+    });
+  }, 500);
 }
 
 app.on('ready', async () => {
@@ -125,27 +134,16 @@ app.on('ready', async () => {
 
   if (!CURRENT_STUDENT) {
     console.log(CURRENT_STUDENT);
-    await queries.addStudent({
-      name: userName,
-      intecId: userName,
-      fullName: userName,
-      computer: os.hostname(),
-      room: '',
-      createdAt: Date.now(),
-      subject: '',
-      trimesterName: currentTrimester[0].name,
-      domain: userDomain
-    });
-    showRules(userName, currentTrimester[0], APP_PREFERENCES);
+    showRules(userName, currentTrimester[0], userDomain, APP_PREFERENCES);
   } else {
     showReminder(APP_PREFERENCES);
   }
   
   // Execute this code to Close any browser. So user first completes this process and then,
   //  can use the computer.
-  jobs = setInterval(() => {
-    executeJobs();
-  }, 5000);
+  // jobs = setInterval(() => {
+  //   executeJobs();
+  // }, 5000);
 });
 
 app.on('window-all-closed', () => {
@@ -159,3 +157,17 @@ app.on('activate', () => {
     createWindow(settings.PAGES.startPage, true);
   }
 });
+
+ipcMain.on('add-student-to-history', async (event, args) => {
+  await queries.addStudent({
+    name: args.userName,
+    intecId: args.userName,
+    fullName: args.userName,
+    computer: os.hostname(),
+    room: '',
+    createdAt: Date.now(),
+    subject: '',
+    trimesterName: args.trimester.name,
+    domain: args.userDomain
+  });
+})
