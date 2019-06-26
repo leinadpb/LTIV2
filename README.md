@@ -1,5 +1,6 @@
 # LATI V2
 #### Complete new version of LTI (INTEC LABS) software
+###### Electron App
 ---
 ## TODO
 1. [ ] Blacklist collection, Close program if user is in this list.
