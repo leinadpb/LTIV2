@@ -2,9 +2,164 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Survey - LABTI</title>
+    <link rel="stylesheet" href="../style/index.css" />
   </head>
+  <style>
+    .page-wrapper {
+      width: 100%;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 5fr 1fr;
+      grid-template-rows: 76px auto;
+      grid-template-areas: 
+        "logo title user"
+        "survey survey survey";
+    }
+    .title {
+      grid-area: title;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .title > h2 {
+      font-weight: 400;
+    }
+    .user-info {
+      grid-area: user;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .labti-logo {
+      grid-area: logo;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .survey {
+      grid-area: survey;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .survey > iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .happy-end {
+      padding: 16px;
+      display: none;
+    }
+    .happy-end > .title {
+      width: 100%;
+      text-align: center;
+    }
+    .happy-end > .title > h5 {
+      font-weight: 200;
+      font-size: 3.0rem;
+    }
+    .happy-end > .labti-name {
+      width: 100%;
+      margin-top: 24px;
+      text-align: center;
+    }
+    .happy-end > .labti-name > span {
+      font-weight: 400;
+      font-size: 1.6rem;
+    }
+    .action-button {
+      width: 100%;
+      height: auto;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .action-button > button {
+      border: none;
+      border-radius: 8%;
+      background-image: radial-gradient( circle 951px at 1.2% 52.7%,  rgba(243,2,2,1) 0%, rgba(57,4,4,1) 99% );
+      color: white;
+      padding: 16px;
+      font-size: 1.4rem;
+      cursor: pointer;
+      box-shadow: 0px 0px 8px 0px rgb(0, 0, 0, 0.1);
+      transition: all 0.16s;
+    }
+    .action-button > button:hover {
+      background-image: radial-gradient( circle 1024px at 1.2% 52.7%,  rgba(243,2,2,1) 0%, rgba(57,4,4,1) 86% );
+    }
+  </style>
   <body>
-    
+    <div class="page-wrapper">
+      <div class="labti-logo">
+        <img src="../../public/images/logo-intec-secundario.jpg" width="70px" height="70px" />
+      </div>
+      <div class="title">
+        <h2>Encuesta LABTI</h2>
+      </div>
+      <div class="user-info">
+        <span>
+          <b>Usuario: </b>1066359
+        </span>
+      </div>
+      <div class="survey">
+        <iframe id="survey-iframe" onChange="iframeChange(e)" onLoad="console.log(this.src)" src="https://docs.google.com/forms/d/e/1FAIpQLScbmdJrdk0tXVNxIc8kjX73yP6Aph49WVN3BqBNcmHoPsAPiw/viewform?usp=sf_link">
+        </iframe>
+        <div id="happy-end" class="happy-end">
+          <div class="title">
+            <h5>
+              Yei! tu opinión será tomada en cuenta.
+            </h5>
+          </div>
+          <div class="labti-name">
+            <span>
+              Laboratorio de Tecnología de la Información
+            </span>
+          </div>
+          <div class="action-button">
+            <button onClick="closeWindow()">Terminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      
+      let hasFilledIt = false;
+      let timesLoaded = 0;
+
+      function iframeChange(e) {
+        console.log('Change detected: ', e);
+      }
+      function closeWindow(e) {
+        window.close();
+      }
+      const iframeSurvey = document.getElementById('survey-iframe');
+      const surveyContainer = document.getElementById('survey');
+      const happyEnd = document.getElementById('happy-end');
+
+      iframeSurvey.addEventListener('load', (e) => {
+        timesLoaded += 1;
+        if (timesLoaded >= 2) {
+          hasFilledIt = true;
+          setTimeout(() => {
+            iframeSurvey.style.display = "none";
+            happyEnd.style.display = "block";
+          }, 2000);
+        }
+      });
+
+    </script>
   </body>
 </html>
