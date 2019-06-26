@@ -17,6 +17,7 @@ let window;
 let jobs;
 let width = 800;
 let height = 600;
+let canQuitApp = false;
 
 const executeJobs = () => {
   killBrowsers.execute();
@@ -35,9 +36,9 @@ const showSurvey = (url) => {
     fullscreen: true
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.surveyPage}.html`));
-  window.webContents.openDevTools();
+  // window.webContents.openDevTools();
   window.on('close', () => {
-    console.log('You have closed the window');
+    console.log('You have closed survey window');
     app.quit();
   })
 }
@@ -52,6 +53,7 @@ const showSurveyOrClose = (APP_PREFERENCES, userDomain) => {
       showSurvey(APP_PREFERENCES.teacherUrl);
     }
   } else {
+    canQuitApp = true;
     app.quit();
   }
 }
@@ -64,11 +66,11 @@ const showReminder = (userDomain, APP_PREFERENCES) => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: false,
+    frame: true,
     resizable: false
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.reminderPage}.html`));
-  window.webContents.openDevTools();
+  // window.webContents.openDevTools();
   window.on('close', () => {
     console.log('You have closed reminder window');
     showSurveyOrClose(userDomain, APP_PREFERENCES);
@@ -89,7 +91,7 @@ const showRules = async (username, trimester, userDomain, APP_PREFERENCES) => {
     fullscreen: true
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.rulesPage}.html`));
-  window.webContents.openDevTools();
+  // window.webContents.openDevTools();
   window.on('close', () => {
     console.log('You have closed rules window');
     showSurveyOrClose(userDomain, APP_PREFERENCES);
@@ -147,7 +149,7 @@ app.on('ready', async () => {
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (process.platform !== 'darwin' && canQuitApp) {
     app.quit();
   }
 });
