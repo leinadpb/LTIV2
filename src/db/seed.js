@@ -1,7 +1,7 @@
 const ConfigModel = require('../models/config');
 const RuleModel = require('../models/rule');
 const TrimesterModel = require('../models/trimesters');
-
+const BlackListModel = require('../models/blackList');
 const queries = require('./queries');
 const settings = require('../settings');
 
@@ -91,6 +91,13 @@ const trimesters = [
   },
 ];
 
+const blackListedUsers = [
+  {
+    intecId: '1066359',
+    domain: 'intec'
+  }
+];
+
 queries.getConfigs().then(docs => {
   if (docs.length === 0) {
     ConfigModel.create(AppConfigs, (err, result) => {
@@ -121,3 +128,14 @@ queries.getTrimesters().then(docs => {
   }
 });
 
+queries.getBlackListUsers().then(docs => {
+  if (docs.length === 0) {
+    BlackListModel.create(blackListedUsers, (err, result) => {
+      if (!!err) {
+        console.log(err);
+        return;
+      };
+      console.log('Blacklist seeded. ', result);
+    })
+  }
+});

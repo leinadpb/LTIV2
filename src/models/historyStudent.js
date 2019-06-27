@@ -9,7 +9,8 @@ const historyStudentSchema = mongoose.Schema({
   createdAt: Date,
   subject: String,
   trimesterName: String,
-  domain: String
+  domain: String,
+  hasFilledSurvey: Boolean
 });
 
 module.exports = mongoose.model('HistoryStudent', historyStudentSchema);
