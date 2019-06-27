@@ -73,7 +73,7 @@ const showReminder = (userDomain, APP_PREFERENCES) => {
   // window.webContents.openDevTools();
   window.on('close', () => {
     console.log('You have closed reminder window');
-    // showSurveyOrClose(userDomain, APP_PREFERENCES);
+    showSurveyOrClose(userDomain, APP_PREFERENCES);
   })
 }
 
@@ -86,7 +86,7 @@ const showRules = async (username, trimester, userDomain, APP_PREFERENCES) => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: false,
+    frame: true,
     resizable: false,
     fullscreen: true
   });
@@ -97,21 +97,23 @@ const showRules = async (username, trimester, userDomain, APP_PREFERENCES) => {
     showSurveyOrClose(userDomain, APP_PREFERENCES);
   });
   setTimeout(() => {
-    window.webContents.send('rules-window-data', {
-      rules: RULES,
-      user: {
-        username: username,
-        domain: userDomain
-      },
-      trimester: trimester
+    ipcMain.on('rules-window-data-request', (event, arg) => {
+      event.reply('rules-window-data',{
+        rules: RULES,
+        user: {
+          username: username,
+          domain: userDomain
+        },
+        trimester: trimester
+      })
     });
   }, 500);
 }
 
 app.on('ready', async () => {
 
-  showReminder(null);
-  
+   showReminder(null);
+    // showSurvey(null);
 
   // // connect to DB
   // require('./helpers/connect_db')
@@ -123,7 +125,7 @@ app.on('ready', async () => {
   // const trimesters = await queries.getTrimesters();
   // // get user info
   // let userDomain = process.env.USERDOMAIN || "intec";
-  // let userName = process.env.USERNAME || os.userInfo().username || "1066359"; // TEST
+  // let userName = process.env.USERNAME || os.userInfo().username;
 
   // const currentTrimester = await queries.getCurrentTrimester();
 
@@ -134,9 +136,10 @@ app.on('ready', async () => {
   //   teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
   // }
 
-  // const STUDENTS = await queries.getStudentInCurrentTrimester(currentTrimester[0]);
+  // const STUDENTS = await queries.getStudentInCurrentTrimester(currentTrimester[0], userName);
   // const CURRENT_STUDENT = STUDENTS[0];
 
+  // console.log("CURRENT STUDENT",userName);
   // if (!CURRENT_STUDENT) {
   //   console.log(CURRENT_STUDENT);
   //   showRules(userName, currentTrimester[0], userDomain, APP_PREFERENCES);
@@ -144,11 +147,11 @@ app.on('ready', async () => {
   //   showReminder(APP_PREFERENCES);
   // }
   
-  // Execute this code to Close any browser. So user first completes this process and then,
-  //  can use the computer.
-  // jobs = setInterval(() => {
-  //   executeJobs();
-  // }, 5000);
+  // // Execute this code to Close any browser. So user first completes this process and then,
+  // //  can use the computer.
+  // // jobs = setInterval(() => {
+  // //   executeJobs();
+  // // }, 5000);
 });
 
 app.on('window-all-closed', () => {

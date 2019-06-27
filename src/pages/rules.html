@@ -19,12 +19,16 @@
       Rules here...
       <button onClick="acceptRules()">Accept</button>
     </div>
+
+
+    
     <script>
       let windowData = undefined;
       const ipcRenderer = require('electron').ipcRenderer;
 
       const acceptRules = () => {
         if (!!windowData) {
+          console.log(windowData);
           ipcRenderer.send('add-student-to-history', { userName:  windowData.user.username, userDomain: windowData.user.domain, trimester: windowData.trimester });
         } else {
           console.log('WindowData not defined');
@@ -32,8 +36,10 @@
       }
 
       ipcRenderer.on('rules-window-data', (event, args) => {
+        console.log(args);
         windowData = args;
       });
+      ipcRenderer.send('rules-window-data-request', {});
       
     </script>
   </body>

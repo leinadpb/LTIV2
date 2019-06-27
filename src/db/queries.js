@@ -72,13 +72,14 @@ const addStudent = (student) => {
     return doc;
   });
 }
-const getStudentInCurrentTrimester = async (currentTrimester) => {
+const getStudentInCurrentTrimester = async (currentTrimester, userName) => {
   // TODO: Get student with createdAt date betwwen current trimester
   const result = await HistoryStudentModel.find({
     createdAt: {
       '$gte': new Date(currentTrimester.start),
       '$lte': new Date(currentTrimester.ends)
-    }
+    },
+    intecId: userName
   }, (err, docs) => {
     if (!!err) {
       console.log('Error retreiving student: ', err);
