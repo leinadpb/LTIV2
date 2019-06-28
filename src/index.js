@@ -24,7 +24,7 @@ const executeJobs = () => {
   test.execute();
 }
 
-const showSurvey = (url, user) => {
+const showSurvey = (url) => {
   window = new BrowserWindow({
     width: 1280,
     height: 720,
@@ -32,40 +32,25 @@ const showSurvey = (url, user) => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: true,
+    frame: false,
     fullscreen: true
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.surveyPage}.html`));
+  // window.webContents.openDevTools();
   window.on('close', () => {
+    console.log('You have closed survey window');
     app.quit();
-  })
-  ipcMain.on('survey-request-data', (e, args) => {
-    e.reply('survey-request-data-reply', {
-      url: url,
-      user: user
-    })
-  })
-  ipcMain.on('filled-survey', async(e, args) => {
-    console.log('User has filled survey: ', args, user);
-    await queries.updateSurveyStatus(user, true);
-    console.log('User survey state was updated to: TRUE');
-    e.reply('survey-state-to-true', {});
   })
 }
 
-const showSurveyOrClose = async (userName, userDomain, APP_PREFERENCES) => {
-  const user = await queries.getUser(userName, userDomain);
-  console.log('User obtained on show survey before: ', user);
+const showSurveyOrClose = (APP_PREFERENCES, userDomain) => {
+  // TODO: Move this code to execute AFTER ONE OF
+  // THE PREVIOUS WINDOWAS ARE CLOSED....
   if (APP_PREFERENCES.showSurvey) {
-    if (!user.hasFilledSurvey) {
-      if (user.domain.toLowerCase() === "intec") {
-        showSurvey(APP_PREFERENCES.studentUrl, user);
-      } else {
-        showSurvey(APP_PREFERENCES.teacherUrl, user);
-      }
+    if (userDomain === "intec") {
+      showSurvey(APP_PREFERENCES.studentUrl);
     } else {
-      canQuitApp = true;
-      app.quit();
+      showSurvey(APP_PREFERENCES.teacherUrl);
     }
   } else {
     canQuitApp = true;
@@ -73,7 +58,7 @@ const showSurveyOrClose = async (userName, userDomain, APP_PREFERENCES) => {
   }
 }
 
-const showReminder = (user, APP_PREFERENCES) => {
+const showReminder = (userDomain, APP_PREFERENCES) => {
   window = new BrowserWindow({
     width: 1100,
     height: 500,
@@ -81,24 +66,19 @@ const showReminder = (user, APP_PREFERENCES) => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: fyalse,
+    frame: false,
     resizable: false
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.reminderPage}.html`));
   // window.webContents.openDevTools();
   window.on('close', () => {
     console.log('You have closed reminder window');
-    showSurveyOrClose(user.intecId, user.domain, APP_PREFERENCES);
+    showSurveyOrClose(userDomain, APP_PREFERENCES);
   })
 }
 
-<<<<<<< HEAD
 const showRules = async (username, trimester, userDomain, APP_PREFERENCES) => {
   const RULES = undefined;
-=======
-const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
-  const RULES = await queries.getRules();
->>>>>>> ad5d4c53a49f37dcbf5b94374c83968d172fe74b
   window = new BrowserWindow({
     width: 1100,
     height: 500,
@@ -111,28 +91,30 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
     fullscreen: true
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.rulesPage}.html`));
+  // window.webContents.openDevTools();
   window.on('close', () => {
     console.log('You have closed rules window');
-    showSurveyOrClose(userName, userDomain, APP_PREFERENCES);
+    showSurveyOrClose(userDomain, APP_PREFERENCES);
   });
-  ipcMain.on('rules-window-data-request', (event, arg) => {
-    event.reply('rules-window-data',{
-      rules: RULES,
-      user: {
-        username: userName,
-        domain: userDomain
-      },
-      trimester: trimester
-    })
-  });
+  setTimeout(() => {
+    ipcMain.on('rules-window-data-request', (event, arg) => {
+      event.reply('rules-window-data',{
+        rules: RULES,
+        user: {
+          username: username,
+          domain: userDomain
+        },
+        trimester: trimester
+      })
+    });
+  }, 500);
 }
 
 app.on('ready', async () => {
 
-<<<<<<< HEAD
-  // showReminder(null);
+    //showReminder(null);
     // showSurvey(null);
-    showRules(null);
+   showRules(null);
 
 
   // // connect to DB
@@ -166,58 +148,12 @@ app.on('ready', async () => {
   // } else {
   //   showReminder(APP_PREFERENCES);
   // }
-=======
-  // connect to DB
-  require('./helpers/connect_db')
-  // Seed data if needed
-  require('./db/seed');
-
-  // get user info
-  let userDomain = process.env.USERDOMAIN || "intec";
-  let userName = process.env.USERNAME || os.userInfo().username;
-
-  // Get Blacklist users
-  const blackListedUsers = await queries.getBlackListUsers();
-  const isUserBlackListed = blackListedUsers.find(u => u.intecId.toLowerCase() === userName.toLowerCase());
-
-  if (isUserBlackListed) {
-    // Stop execution of the program.
-    console.log('You are blacklisted, so the program will close.');
-    app.quit();
-    return;
-  }
   
-  // get configs
-  const configs = await queries.getConfigs();
-  // get trimestres
-  const trimesters = await queries.getTrimesters();
-
-  const currentTrimester = await queries.getCurrentTrimester();
-
-  const APP_PREFERENCES = {
-    fullscreen: configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value,
-    showSurvey: configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value,
-    studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
-    teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
-  }
-
-  const USERS = (userDomain.toLowerCase() === "intec") ? await queries.getStudentInCurrentTrimester(currentTrimester[0], userName) : await queries.getT(currentTrimester[0], userName);
-  const USER = USERS[0];
-
-  console.log("CURRENT STUDENT", USER);
-  if (!USER) {
-    showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
-  } else {
-    console.log(USER);
-    showReminder(USER, APP_PREFERENCES);
-  }
->>>>>>> ad5d4c53a49f37dcbf5b94374c83968d172fe74b
-  
-  // Execute this code to Close any browser. So user first completes this process and then,
-  //  can use the computer.
-  jobs = setInterval(() => {
-    executeJobs();
-  }, 5000);
+  // // Execute this code to Close any browser. So user first completes this process and then,
+  // //  can use the computer.
+  // // jobs = setInterval(() => {
+  // //   executeJobs();
+  // // }, 5000);
 });
 
 app.on('window-all-closed', () => {
@@ -242,7 +178,6 @@ ipcMain.on('add-student-to-history', async (event, args) => {
     createdAt: Date.now(),
     subject: '',
     trimesterName: args.trimester.name,
-    domain: args.userDomain,
-    hasFilledSurvey: false
+    domain: args.userDomain
   });
 })

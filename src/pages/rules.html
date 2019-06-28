@@ -10,11 +10,11 @@
   <body>
     
 
-        <div class="container">
-          <h1 class="title-list animated bounceInUp">Normas de laboratorio</h1>
+        <div class="container animated bounceInUp">
+          <h1 class="title-list ">Normas de laboratorio</h1>
 
           <div class="list-content">
-              <ul class="list animated bounceInUp">
+              <ul class="list ">
                   <li>No Ingerir alimentos y bebidas en las aulas y/o pasillos.</li>
                   <li>Prohibido fumar.</li>
                   <li>Mantenga el silencio.</li>
@@ -31,9 +31,35 @@
                   
               </ul>
           </div>
-  
+         
+        </div>
+        <div class="form"> 
+            <label for="subject" class="Form-subject">Materia:</label>
+              <select name="subject" id="subject">
+                <option value="1">Materiales y procesos</option> 
+                <option value="2">Investigacion Operativa</option> 
+                <option value="3">Ingenieria asistida</option>
+                <option value="10">Potencia I</option> 
+                <option value="11">Potencia II</option> 
+                <option value="12">Analisis numerico</option> 
+          </select>
+
+          <label for="teacher" class="Form-teacher">Profesor:</label>
+              <select name="teacher" id="teacher">
+                <option value="1">Jose</option> 
+                <option value="2">juan</option> 
+                <option value="3">pedro</option>
+                <option value="10">Angelo</option> 
+                <option value="11">Leensan</option> 
+                <option value="12">Israel</option> 
+          </select>
+    </div>
+    <div class="button">
+        <button onClick="acceptRules()" class="btn">Aceptar</button>
+    </div>
       </div>
-      <button onClick="acceptRules()">Accept</button>
+
+      
    
 
 
