@@ -66,7 +66,7 @@ const showReminder = (userDomain, APP_PREFERENCES) => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: false,
+    frame: fyalse,
     resizable: false
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.reminderPage}.html`));
@@ -78,7 +78,7 @@ const showReminder = (userDomain, APP_PREFERENCES) => {
 }
 
 const showRules = async (username, trimester, userDomain, APP_PREFERENCES) => {
-  const RULES = await queries.getRules();
+  const RULES = undefined;
   window = new BrowserWindow({
     width: 1100,
     height: 500,
@@ -112,8 +112,10 @@ const showRules = async (username, trimester, userDomain, APP_PREFERENCES) => {
 
 app.on('ready', async () => {
 
-   showReminder(null);
+  // showReminder(null);
     // showSurvey(null);
+    showRules(null);
+
 
   // // connect to DB
   // require('./helpers/connect_db')
