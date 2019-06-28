@@ -92,13 +92,8 @@ const showReminder = (user, APP_PREFERENCES) => {
   })
 }
 
-<<<<<<< HEAD
-const showRules = async (username, trimester, userDomain, APP_PREFERENCES) => {
-  const RULES = undefined;
-=======
 const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
   const RULES = await queries.getRules();
->>>>>>> ad5d4c53a49f37dcbf5b94374c83968d172fe74b
   window = new BrowserWindow({
     width: 1100,
     height: 500,
@@ -129,44 +124,6 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
 
 app.on('ready', async () => {
 
-<<<<<<< HEAD
-  // showReminder(null);
-    // showSurvey(null);
-    showRules(null);
-
-
-  // // connect to DB
-  // require('./helpers/connect_db')
-  // // Seed data if needed
-  // require('./db/seed');
-  // // get configs
-  // const configs = await queries.getConfigs();
-  // // get trimestres
-  // const trimesters = await queries.getTrimesters();
-  // // get user info
-  // let userDomain = process.env.USERDOMAIN || "intec";
-  // let userName = process.env.USERNAME || os.userInfo().username;
-
-  // const currentTrimester = await queries.getCurrentTrimester();
-
-  // const APP_PREFERENCES = {
-  //   fullscreen: configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value,
-  //   showSurvey: configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value,
-  //   studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
-  //   teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
-  // }
-
-  // const STUDENTS = await queries.getStudentInCurrentTrimester(currentTrimester[0], userName);
-  // const CURRENT_STUDENT = STUDENTS[0];
-
-  // console.log("CURRENT STUDENT",userName);
-  // if (!CURRENT_STUDENT) {
-  //   console.log(CURRENT_STUDENT);
-  //   showRules(userName, currentTrimester[0], userDomain, APP_PREFERENCES);
-  // } else {
-  //   showReminder(APP_PREFERENCES);
-  // }
-=======
   // connect to DB
   require('./helpers/connect_db')
   // Seed data if needed
@@ -211,7 +168,6 @@ app.on('ready', async () => {
     console.log(USER);
     showReminder(USER, APP_PREFERENCES);
   }
->>>>>>> ad5d4c53a49f37dcbf5b94374c83968d172fe74b
   
   // Execute this code to Close any browser. So user first completes this process and then,
   //  can use the computer.
