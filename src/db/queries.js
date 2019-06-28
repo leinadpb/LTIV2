@@ -3,6 +3,7 @@ const RuleModel = require('../models/rule');
 const TrimesterModel = require('../models/trimesters');
 const HistoryStudentModel = require('../models/historyStudent');
 const HistoryTeacherModel = require('../models/historyTecher');
+const BlackListModel = require('../models/blackList');
 
 // CONFIGS
 const getConfigs = () => {
@@ -109,6 +110,95 @@ const addTeacher = (teacher) => {
     return doc;
   }).lean().exec();
 }
+const getTeacherInCurrentTrimester = async (currentTrimester, userName) => {
+  // TODO: Get student with createdAt date betwwen current trimester
+  const result = await HistoryTeacherModel.find({
+    createdAt: {
+      '$gte': new Date(currentTrimester.start),
+      '$lte': new Date(currentTrimester.ends)
+    },
+    intecId: userName
+  }, (err, docs) => {
+    if (!!err) {
+      console.log('Error retreiving student: ', err);
+      return null;
+    }
+    return docs;
+  }).lean();
+  return result;
+}
+
+// user common
+const updateSurveyStatus = (user, value) => {
+  if (user.domain.toLowerCase() === "intec") {
+    return HistoryStudentModel.updateOne({intecId: user.intecId}, { hasFilledSurvey: value }, (err, doc) => {
+      if (!!err) {
+        console.log('Error creating teacher: ', err);
+        return null;
+      }
+      return doc;
+    }).lean().exec();
+
+  } else {
+    return HistoryTeacherModel.findOneAndUpdate({intecId: user.username}, {
+      '$set': {
+        hasFilledSurvey: value
+      }
+    }, (err, doc) => {
+      if (!!err) {
+        console.log('Error creating teacher: ', err);
+        return null;
+      }
+      return doc;
+    }).lean().exec();
+  }
+}
+const getUser = (intecId, domain) => {
+  if (domain.toLowerCase() === "intec") {
+    return HistoryStudentModel.findOne({intecId: intecId}, (err, doc) => {
+      if (!!err) {
+        console.log('Error getting user with id: ', intecId, ' Error: ', err);
+        return;
+      }
+      return doc;
+    }).lean()
+  } else {
+    return HistoryTeacherModel.findOne({intecId: intecId}, (err, doc) => {
+      if (!!err) {
+        console.log('Error getting user with id: ', intecId, ' Error: ', err);
+        return;
+      }
+      return doc;
+    }).lean()
+  }
+}
+
+// BlackList
+const getBlackListUsers = () => {
+  return BlackListModel.find({}, (err, docs) => {
+    if (!!err) {
+      console.log('Error retreiving Trimesters: ', err);
+      return null;
+    }
+    return docs;
+  }).lean();
+}
+const addBlackListUser = (intecId, domain) => {
+  return BlackListModel.create({intecId: intecId, domain: domain}, (err) => {
+    if (!!err) {
+      console.log('Error retreiving Trimesters: ', err);
+      return null;
+    }
+  });
+}
+const deleteBlackListUser = (intecId) => {
+  return BlackListModel.findOneAndDelete({intecId: intecId}, (err) => {
+    if (!!err) {
+      console.log('Error retreiving Trimesters: ', err);
+      return null;
+    }
+  });
+}
 
 module.exports = {
   getConfigs,
@@ -119,5 +209,11 @@ module.exports = {
   getTeachers,
   addStudent,
   addTeacher,
-  getStudentInCurrentTrimester
+  getStudentInCurrentTrimester,
+  getTeacherInCurrentTrimester,
+  updateSurveyStatus,
+  getBlackListUsers,
+  addBlackListUser,
+  deleteBlackListUser,
+  getUser,
 }

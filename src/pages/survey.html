@@ -138,12 +138,27 @@
       
       let hasFilledIt = false;
       let timesLoaded = 0;
+      const ipcRenderer = require('electron').ipcRenderer;
+      const windowData = undefined;
+      
+      ipcRenderer.send('survey-request-data', {});
+
+      ipcRenderer.on('survey-request-data-reply', (e, args) => {
+        windowData = args;
+        console.log('Survey window data: ', windowData);
+      })
+
+      ipcRenderer.on('survey-state-to-true', (e, args) => {
+        window.close();
+      });
 
       function iframeChange(e) {
         console.log('Change detected: ', e);
       }
       function closeWindow(e) {
-        window.close();
+        if (hasFilledIt) {
+          ipcRenderer.send('filled-survey', (e, args) => {});
+        }
       }
       const iframeSurvey = document.getElementById('survey-iframe');
       const surveyContainer = document.getElementById('survey');
@@ -156,7 +171,7 @@
           setTimeout(() => {
             iframeSurvey.style.display = "none";
             happyEnd.style.display = "block";
-          }, 2000);
+          }, 800);
         }
       });
 
