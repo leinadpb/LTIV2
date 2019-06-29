@@ -2,7 +2,7 @@
     font-family: 20px;
     font-family: Arial, Helvetica, sans-serif;
     margin-left: 80px;
-    padding: 20px;
+    padding: 2px;
     text-align: center;
     color:red;
     -webkit-text-stroke: 1px black;
@@ -17,7 +17,7 @@
 
  li {padding: 10px;
     background: #DCD8D7;
-    margin: 20px;
+    margin: 18px;
     box-shadow: 1px 2px 10px  1px #ccc;
     border-radius: 10px;
     list-style: none;}    
@@ -29,7 +29,7 @@
      color: #687278;
      left: 650px;
     font-size: 25px;
-	padding: 8px;
+	padding: 7px;
 	/**/
   border-radius: 3px;
  position: relative;
@@ -45,7 +45,7 @@
 }
 .select {
     border-bottom: 1px solid #eee;
-    padding: 5px 15px;
+    padding: 5px 10px;
     border-radius: 5px;
       background: #fff;
   
