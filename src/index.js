@@ -35,10 +35,6 @@ const showSurvey = (url, user) => {
     frame: true,
     fullscreen: true
   });
-  window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.surveyPage}.html`));
-  window.on('close', () => {
-    app.quit();
-  })
   ipcMain.on('survey-request-data', (e, args) => {
     e.reply('survey-request-data-reply', {
       url: url,
@@ -50,6 +46,10 @@ const showSurvey = (url, user) => {
     await queries.updateSurveyStatus(user, true);
     console.log('User survey state was updated to: TRUE');
     e.reply('survey-state-to-true', {});
+  })
+  window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.surveyPage}.html`));
+  window.on('close', () => {
+    app.quit();
   })
 }
 
@@ -105,11 +105,6 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
     resizable: false,
     fullscreen: true
   });
-  window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.rulesPage}.html`));
-  window.on('close', () => {
-    console.log('You have closed rules window');
-    showSurveyOrClose(userName, userDomain, APP_PREFERENCES);
-  });
   ipcMain.on('rules-window-data-request', (event, arg) => {
     event.reply('rules-window-data',{
       rules: RULES,
@@ -119,6 +114,11 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
       },
       trimester: trimester
     })
+  });
+  window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.rulesPage}.html`));
+  window.on('close', () => {
+    console.log('You have closed rules window');
+    showSurveyOrClose(userName, userDomain, APP_PREFERENCES);
   });
 }
 
@@ -158,7 +158,7 @@ app.on('ready', async () => {
     teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
   }
 
-  const USERS = (userDomain.toLowerCase() === "intec") ? await queries.getStudentInCurrentTrimester(currentTrimester[0], userName) : await queries.getT(currentTrimester[0], userName);
+  const USERS = (userDomain.toLowerCase() === "intec") ? await queries.getStudentInCurrentTrimester(currentTrimester[0], userName) : await queries.getTeacherInCurrentTrimester(currentTrimester[0], userName);
   const USER = USERS[0];
 
   console.log("CURRENT STUDENT", USER);
@@ -189,16 +189,31 @@ app.on('activate', () => {
 });
 
 ipcMain.on('add-student-to-history', async (event, args) => {
-  await queries.addStudent({
-    name: args.userName,
-    intecId: args.userName,
-    fullName: args.userName,
-    computer: os.hostname(),
-    room: '',
-    createdAt: Date.now(),
-    subject: '',
-    trimesterName: args.trimester.name,
-    domain: args.userDomain,
-    hasFilledSurvey: false
-  });
+  if (args.userDomain.toLowerCase() === "intec") {
+    await queries.addStudent({
+      name: args.userName,
+      intecId: args.userName,
+      fullName: args.userName,
+      computer: os.hostname(),
+      room: '',
+      createdAt: Date.now(),
+      subject: '',
+      trimesterName: args.trimester.name,
+      domain: args.userDomain,
+      hasFilledSurvey: false
+    });
+  } else {
+    await queries.addTeacher({
+      name: args.userName,
+      intecId: args.userName,
+      fullName: args.userName,
+      computer: os.hostname(),
+      room: '',
+      createdAt: Date.now(),
+      subject: '',
+      trimesterName: args.trimester.name,
+      domain: args.userDomain,
+      hasFilledSurvey: false
+    });
+  }
 })
