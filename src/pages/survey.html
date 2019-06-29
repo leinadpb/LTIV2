@@ -155,7 +155,8 @@
       function iframeChange(e) {
         console.log('Change detected: ', e);
       }
-      function closeWindow(e) {
+      function closeWindow() {
+        console.log('Try to close: ', hasFilledIt);
         if (hasFilledIt) {
           ipcRenderer.send('filled-survey', (e, args) => {});
         }
@@ -165,6 +166,7 @@
       const happyEnd = document.getElementById('happy-end');
 
       iframeSurvey.addEventListener('load', (e) => {
+        console.log('Listener:', e);
         timesLoaded += 1;
         if (timesLoaded >= 2) {
           hasFilledIt = true;
