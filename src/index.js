@@ -24,7 +24,7 @@ const executeJobs = () => {
   test.execute();
 }
 
-const showSurvey = (url) => {
+const showSurvey = (url, user) => {
   window = new BrowserWindow({
     width: 1280,
     height: 720,
@@ -32,25 +32,40 @@ const showSurvey = (url) => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: false,
+    frame: true,
     fullscreen: true
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.surveyPage}.html`));
-  // window.webContents.openDevTools();
   window.on('close', () => {
-    console.log('You have closed survey window');
     app.quit();
+  })
+  ipcMain.on('survey-request-data', (e, args) => {
+    e.reply('survey-request-data-reply', {
+      url: url,
+      user: user
+    })
+  })
+  ipcMain.on('filled-survey', async(e, args) => {
+    console.log('User has filled survey: ', args, user);
+    await queries.updateSurveyStatus(user, true);
+    console.log('User survey state was updated to: TRUE');
+    e.reply('survey-state-to-true', {});
   })
 }
 
-const showSurveyOrClose = (APP_PREFERENCES, userDomain) => {
-  // TODO: Move this code to execute AFTER ONE OF
-  // THE PREVIOUS WINDOWAS ARE CLOSED....
+const showSurveyOrClose = async (userName, userDomain, APP_PREFERENCES) => {
+  const user = await queries.getUser(userName, userDomain);
+  console.log('User obtained on show survey before: ', user);
   if (APP_PREFERENCES.showSurvey) {
-    if (userDomain === "intec") {
-      showSurvey(APP_PREFERENCES.studentUrl);
+    if (!user.hasFilledSurvey) {
+      if (user.domain.toLowerCase() === "intec") {
+        showSurvey(APP_PREFERENCES.studentUrl, user);
+      } else {
+        showSurvey(APP_PREFERENCES.teacherUrl, user);
+      }
     } else {
-      showSurvey(APP_PREFERENCES.teacherUrl);
+      canQuitApp = true;
+      app.quit();
     }
   } else {
     canQuitApp = true;
@@ -58,7 +73,7 @@ const showSurveyOrClose = (APP_PREFERENCES, userDomain) => {
   }
 }
 
-const showReminder = (userDomain, APP_PREFERENCES) => {
+const showReminder = (user, APP_PREFERENCES) => {
   window = new BrowserWindow({
     width: 1100,
     height: 500,
@@ -73,7 +88,7 @@ const showReminder = (userDomain, APP_PREFERENCES) => {
   // window.webContents.openDevTools();
   window.on('close', () => {
     console.log('You have closed reminder window');
-    showSurveyOrClose(userDomain, APP_PREFERENCES);
+    showSurveyOrClose(user.intecId, user.domain, APP_PREFERENCES);
   })
 }
 
@@ -91,23 +106,20 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
     fullscreen: true
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.rulesPage}.html`));
-  // window.webContents.openDevTools();
   window.on('close', () => {
     console.log('You have closed rules window');
-    showSurveyOrClose(userDomain, APP_PREFERENCES);
+    showSurveyOrClose(userName, userDomain, APP_PREFERENCES);
   });
-  setTimeout(() => {
-    ipcMain.on('rules-window-data-request', (event, arg) => {
-      event.reply('rules-window-data',{
-        rules: RULES,
-        user: {
-          username: username,
-          domain: userDomain
-        },
-        trimester: trimester
-      })
-    });
-  }, 500);
+  ipcMain.on('rules-window-data-request', (event, arg) => {
+    event.reply('rules-window-data',{
+      rules: RULES,
+      user: {
+        username: userName,
+        domain: userDomain
+      },
+      trimester: trimester
+    })
+  });
 }
 
 app.on('ready', async () => {
@@ -157,11 +169,11 @@ app.on('ready', async () => {
     showReminder(USER, APP_PREFERENCES);
   }
   
-  // // Execute this code to Close any browser. So user first completes this process and then,
-  // //  can use the computer.
-  // // jobs = setInterval(() => {
-  // //   executeJobs();
-  // // }, 5000);
+  // Execute this code to Close any browser. So user first completes this process and then,
+  //  can use the computer.
+  jobs = setInterval(() => {
+    executeJobs();
+  }, 5000);
 });
 
 app.on('window-all-closed', () => {
@@ -186,6 +198,7 @@ ipcMain.on('add-student-to-history', async (event, args) => {
     createdAt: Date.now(),
     subject: '',
     trimesterName: args.trimester.name,
-    domain: args.userDomain
+    domain: args.userDomain,
+    hasFilledSurvey: false
   });
 })
