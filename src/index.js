@@ -171,9 +171,9 @@ app.on('ready', async () => {
   
   // Execute this code to Close any browser. So user first completes this process and then,
   //  can use the computer.
-  jobs = setInterval(() => {
-    executeJobs();
-  }, 5000);
+  // jobs = setInterval(() => {
+  //   executeJobs();
+  // }, 5000);
 });
 
 app.on('window-all-closed', () => {
