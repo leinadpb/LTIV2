@@ -129,9 +129,9 @@ const getTeacherInCurrentTrimester = async (currentTrimester, userName) => {
 }
 
 // user common
-const updateSurveyStatus = (domain, intecId, value) => {
-  if (domain.toLowerCase() === "intec") {
-    return HistoryStudentModel.updateOne({intecId: intecId}, { hasFilledSurvey: value }, (err, doc) => {
+const updateSurveyStatus = (user, value) => {
+  if (user.domain.toLowerCase() === "intec") {
+    return HistoryStudentModel.updateOne({intecId: user.intecId}, { hasFilledSurvey: value }, (err, doc) => {
       if (!!err) {
         console.log('Error creating teacher: ', err);
         return null;
@@ -140,7 +140,7 @@ const updateSurveyStatus = (domain, intecId, value) => {
     }).lean().exec();
 
   } else {
-    return HistoryTeacherModel.updateOne({intecId: intecId}, { hasFilledSurvey: value }, (err, doc) => {
+    return HistoryTeacherModel.updateOne({intecId: user.intecId}, { hasFilledSurvey: value }, (err, doc) => {
       if (!!err) {
         console.log('Error creating teacher: ', err);
         return null;
