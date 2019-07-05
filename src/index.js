@@ -7,6 +7,8 @@ const queries = require('./db/queries');
 const os = require('os');
 const path = require('path');
 
+require('electron-reload')(__dirname);
+
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
