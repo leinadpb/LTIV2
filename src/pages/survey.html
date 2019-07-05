@@ -34,6 +34,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
+    }
+    .user-info-box {
+      margin: 8px;
     }
     .labti-logo {
       grid-area: logo;
@@ -109,9 +113,14 @@
         <h2>Encuesta LABTI</h2>
       </div>
       <div class="user-info">
-        <span>
-          <b>Usuario: </b>1066359
-        </span>
+        <div class="user-info-box">
+          <b><span id="user-id"></span></b>
+        </div>
+        <div class="user-info-box">
+          <span>
+            <i><span id="trimester-name"></span></i>
+          </span>
+        </div>
       </div>
       <div class="survey">
         <iframe id="survey-iframe" onChange="iframeChange(e)" onLoad="console.log(this.src)" src="https://docs.google.com/forms/d/e/1FAIpQLScbmdJrdk0tXVNxIc8kjX73yP6Aph49WVN3BqBNcmHoPsAPiw/viewform?usp=sf_link">
@@ -139,18 +148,24 @@
       let hasFilledIt = false;
       let timesLoaded = 0;
       const ipcRenderer = require('electron').ipcRenderer;
-      const windowData = undefined;
+      let windowData = undefined;
       
       ipcRenderer.send('survey-request-data', {});
 
       ipcRenderer.on('survey-request-data-reply', (e, args) => {
         windowData = args;
+        setWindowData()
         console.log('Survey window data: ', windowData);
       })
 
       ipcRenderer.on('survey-state-to-true', (e, args) => {
         window.close();
       });
+
+      const setWindowData = () => {
+        document.getElementById("user-id").innerHTML = windowData.user.fullName;
+        document.getElementById("trimester-name").innerHTML = windowData.user.trimesterName;
+      }
 
       function iframeChange(e) {
         console.log('Change detected: ', e);
