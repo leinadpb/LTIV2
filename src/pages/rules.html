@@ -14,7 +14,7 @@
           <h1 class="title-list ">Normas de laboratorio</h1>
 
           <div class="list-content">
-              <ul class="list ">
+              <ol class="list ">
                   <li>No Ingerir alimentos y bebidas en las aulas y/o pasillos.</li>
                   <li>Prohibido fumar.</li>
                   <li>Mantenga el silencio.</li>
@@ -29,7 +29,7 @@
                   <li>No se permiten mecerse en las sillas, ya que las mismas no estan diseñadas para tal fin.</li>
                   <li>Favor no rayar muebles, ni paredes, van perdiendo belleza y afean tu ambiente de estudio.</li>
                   
-              </ul>
+              </ol>
           </div>
          
         </div>
@@ -95,7 +95,13 @@
         console.log(args);
         windowData = args;
       });
+      let btn = document.getElementById('btn');
+      btn.addEventListener( 'click' , () => {
+          let valor = document.getElementsByTagName("option").value;
+          console.log(valor);
+      });
       
+
       
     </script>
   </body>
