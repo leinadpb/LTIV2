@@ -4,6 +4,7 @@ const TrimesterModel = require('../models/trimesters');
 const HistoryStudentModel = require('../models/historyStudent');
 const HistoryTeacherModel = require('../models/historyTecher');
 const BlackListModel = require('../models/blackList');
+const SubjectModel = require('../models/subject');
 
 // CONFIGS
 const getConfigs = () => {
@@ -196,6 +197,17 @@ const deleteBlackListUser = (intecId) => {
   });
 }
 
+// Subjects
+const getSubjects = () => {
+  return SubjectModel.find({}, (err, docs) => {
+    if (!!err) {
+      console.log('Error retreiving Subjects: ', err);
+      return null;
+    }
+    return docs;
+  }).lean();
+}
+
 module.exports = {
   getConfigs,
   getRules,
@@ -212,4 +224,5 @@ module.exports = {
   addBlackListUser,
   deleteBlackListUser,
   getUser,
+  getSubjects,
 }

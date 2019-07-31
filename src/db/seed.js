@@ -2,8 +2,61 @@ const ConfigModel = require('../models/config');
 const RuleModel = require('../models/rule');
 const TrimesterModel = require('../models/trimesters');
 const BlackListModel = require('../models/blackList');
+const TeacherModel = require('../models/teacher');
+const SubjectModel = require('../models/subject');
 const queries = require('./queries');
 const settings = require('../settings');
+
+const Subjects = [
+  {
+    name: 'BIOLOGIA GENERAL',
+    code: 'CBB101',
+    type: 'T',
+    section: '01',
+    room: 'FD415',
+    teacherAssigned: 'KELVIN ANTONIO GUERRERO RAMIREZ'
+  },
+  {
+    name: 'PROGRAMACION I',
+    code: 'INS212',
+    type: 'T',
+    section: '01',
+    room: 'FD414',
+    teacherAssigned: 'JOEL FRANCIS JIMENEZ BAEZ'
+  },
+  {
+    name: 'FUNDAMENTOS DE PROGRAMACION',
+    code: 'INS208',
+    type: 'T',
+    section: '01',
+    room: 'FD405',
+    teacherAssigned: 'FERNANDO ARTURO HIRUJO PICHARDO'
+  },
+  {
+    name: 'HOJAS DE CALCULO PARA INGENIEROS',
+    code: 'INS209',
+    type: 'T',
+    section: '01',
+    room: 'FD402',
+    teacherAssigned: 'CRISTIAN MARIANO RODRIGUEZ REYES'
+  },
+  {
+    name: 'DIBUJO CIVIL',
+    code: 'CIV311',
+    type: 'T',
+    section: '03',
+    room: 'FD411',
+    teacherAssigned: 'OMAR RAMOS PEPEN'
+  },
+  {
+    name: 'DIBUJO MECANICO I',
+    code: 'INM201',
+    type: 'T',
+    section: '02',
+    room: 'FD412',
+    teacherAssigned: 'PEDRO PABLO BENITEZ LUNA'
+  },
+];
 
 const AppConfigs = [
   {
@@ -136,6 +189,18 @@ queries.getBlackListUsers().then(docs => {
         return;
       };
       console.log('Blacklist seeded. ', result);
+    })
+  }
+});
+
+queries.getSubjects().then(docs => {
+  if (docs.length === 0) {
+    SubjectModel.create(Subjects, (err, result) => {
+      if (!!err) {
+        console.log(err);
+        return;
+      };
+      console.log('Subjects seeded. ', result);
     })
   }
 });

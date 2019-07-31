@@ -96,6 +96,7 @@ const showReminder = (user, APP_PREFERENCES) => {
 
 const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
   const RULES = await queries.getRules();
+  const SUBJECTS = await queries.getSubjects();
   window = new BrowserWindow({
     width: 1100,
     height: 500,
@@ -110,6 +111,7 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
   ipcMain.on('rules-window-data-request', (event, arg) => {
     event.reply('rules-window-data',{
       rules: RULES,
+      subjects: SUBJECTS,
       user: {
         username: userName,
         domain: userDomain
@@ -200,7 +202,9 @@ ipcMain.on('add-student-to-history', async (event, args) => {
       computer: os.hostname(),
       room: '',
       createdAt: Date.now(),
-      subject: '',
+      teacher: (!!args.selectedData && !!args.selectedData.teacher) ? args.selectedData.teacher : '',
+      subject: (!!args.selectedData && !!args.selectedData.subject) ? args.selectedData.subject : '',
+      section: (!!args.selectedData && !!args.selectedData.section && !!args.selectedData.section != 0) ? args.selectedData.section : '',
       trimesterName: args.trimester.name,
       domain: args.userDomain,
       hasFilledSurvey: false
@@ -219,4 +223,6 @@ ipcMain.on('add-student-to-history', async (event, args) => {
       hasFilledSurvey: false
     });
   }
+  // Tell the Rules view that rules has been accepted without validation. This is the best for User Experience.
+  event.reply('rules-has-been-accepted', {});
 })

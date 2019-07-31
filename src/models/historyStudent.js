@@ -8,6 +8,8 @@ const historyStudentSchema = mongoose.Schema({
   room: String,
   createdAt: Date,
   subject: String,
+  teacher: String,
+  section: String,
   trimesterName: String,
   domain: String,
   hasFilledSurvey: Boolean
