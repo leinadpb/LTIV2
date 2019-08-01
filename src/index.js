@@ -8,6 +8,8 @@ const os = require('os');
 const path = require('path');
 
 require('electron-reload')(__dirname);
+const unhandled = require('electron-unhandled');
+unhandled();
 
 if (require('electron-squirrel-startup')) {
   app.quit();
