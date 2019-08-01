@@ -6,6 +6,7 @@ const subjectSchema = mongoose.Schema({
   type: String,
   section: String,
   room: String,
+  credits: String,
   teacherAssigned: String
 });
 

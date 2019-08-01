@@ -103,7 +103,7 @@
         subjects.forEach(s => {
           let element = document.createElement('option');
           element.value = s.code;
-          element.innerHTML = `${s.code} | ${s.name}`;
+          element.innerHTML = s.name;
           subjectList.appendChild(element);
         });
         subjectList.addEventListener("change", () => {
@@ -111,7 +111,13 @@
           if (subjectList.value !== "-1") {
             // Fetch teachers and enable their selections
             let filteredSubjects = subjects.filter(s => s.code === subjectList.value);
-            let teachers = [...filteredSubjects.map(x => x.teacherAssigned)];
+            let teachers = [];
+            filteredSubjects.forEach(fs => {
+              let subTeachers = fs.teacherAssigned.split(';');
+              subTeachers.forEach(st => {
+                teachers.push(st);
+              })
+            })
             console.log(filteredSubjects);
             console.log(teachers);
             if (!!teachers) {
