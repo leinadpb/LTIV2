@@ -36,7 +36,7 @@ const showSurvey = (url, user) => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: true,
+    frame: false,
     fullscreen: true
   });
   ipcMain.on('survey-request-data', (e, args) => {
@@ -88,6 +88,11 @@ const showReminder = (user, APP_PREFERENCES) => {
     frame: false,
     resizable: false
   });
+  ipcMain.on('rulesReminder-window-data-request', (event, arg) => {
+    event.reply('rulesReminder-window-data', {
+      customText: APP_PREFERENCES.reminderText
+    })
+  });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.reminderPage}.html`));
   // window.webContents.openDevTools();
   window.on('close', () => {
@@ -106,7 +111,7 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: true,
+    frame: false,
     resizable: false,
     fullscreen: true
   });
@@ -162,7 +167,9 @@ app.on('ready', async () => {
     showSurvey: configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value,
     studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
     teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
+    reminderText: configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value,
   }
+  console.log
 
   const USERS = (userDomain.toLowerCase() === "intec") ? await queries.getStudentInCurrentTrimester(currentTrimester[0], userName) : await queries.getTeacherInCurrentTrimester(currentTrimester[0], userName);
   const USER = USERS[0];

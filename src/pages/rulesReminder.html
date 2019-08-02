@@ -1,39 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>reglamento</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
-    <link rel="stylesheet" href="styles/rulesReminder.css">
-</head>
-<body>
-    <div class="container" id="container">
+  <head>
+      <meta charset="UTF-8">
+      <title>reglamento</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+      <link rel="stylesheet" href="styles/rulesReminder.css">
+  </head>
+  <style>
+    .page-wrapper {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+  </style>
+  <body>
+      <div class="page-wrapper container" id="container">
         <div class="card-img animated zoomIn">
             <div class="img">
-                    <img src="../../public/images/silence.png" width="180">
+              <img src="../../public/images/silence.png" width="180">
             </div>
             <div class="img">
-                    <img src="../../public/images/no-food.png" width="300">
+              <img src="../../public/images/no-food.png" width="300">
             </div>
             <div class="img">
-                    <img src="../../public/images/headphones.png" width="300">
+              <img src="../../public/images/headphones.png" width="300">
             </div>
+        </div>
+        <div>
+          <i><span id="custom-text"></span></i>
         </div>
         <div class="button">
-                
-                <input class="btn" id="btn" type="submit" value="¡Entendido!">
+          <input class="btn" id="btn" type="submit" value="¡Entendido!">
         </div>
     </div>
+  </body>
+  <script>
+    let btn =  document.getElementById('btn');
+    let container = document.getElementById('container');
+    let windowData = undefined;
+    const ipcRenderer = require('electron').ipcRenderer;
+    ipcRenderer.send('rulesReminder-window-data-request', {});
 
-<script>
-  let btn =  document.getElementById('btn');
-  let container = document.getElementById('container');
-    
+    ipcRenderer.on('rulesReminder-window-data', (event, args) => {
+      windowData = args;
+      if (!!windowData) {
+        let customText = document.getElementById('custom-text');
+        if (!!windowData.customText) {
+          customText.innerHTML = windowData.customText;
+        }
+      }
+    });
     btn.addEventListener('click', () => {
       window.close();
     });
-   
-</script>
 
-</body>
+  </script>
+
+  </body>
 </html>

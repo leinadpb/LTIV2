@@ -24,7 +24,6 @@
     justify-content: center;}
 
 .btn {
-    width: 10%;
     border:none;
     padding: 12px;
     color: white;
@@ -39,5 +38,5 @@
 }
 .btn:hover{
     background: #C13726;
-    
+    cursor: pointer;
 }
