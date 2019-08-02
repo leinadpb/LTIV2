@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const envs = require('../../environments');
 
-console.log(process.env.CONNECTION_STRING);
-const db = process.env.CONNECTION_STRING;
+console.log(envs.CONNECTION_STRING);
+const db = envs.CONNECTION_STRING;
 
 mongoose
   .connect(db, { useNewUrlParser: true })

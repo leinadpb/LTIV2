@@ -4,105 +4,142 @@
     <meta charset="utf-8">
     <title>Rules - LABTI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
-    <link rel="stylesheet" href="styles/rules.css" />
-    
+    <link rel="stylesheet" href="./styles/rules.css" />
   </head>
   <body>
-    
-
-        <div class="container animated bounceInUp">
-          <h1 class="title-list ">Normas de laboratorio</h1>
-
-          <div class="list-content">
-              <ol class="list ">
-                  <li>No Ingerir alimentos y bebidas en las aulas y/o pasillos.</li>
-                  <li>Prohibido fumar.</li>
-                  <li>Mantenga el silencio.</li>
-                  <li>Ordenar su puesto de trabajo, no tirar basura.</li>
-                  <li>Respetar la configuracion del equipo, evite instalacion y descarga de software sin autorizacion.</li>
-                  <li>Favor de utilizar audifonos para la reproduccion de multimedia</li>
-                  <li>No aglomerarse en los pasillos.</li>
-                  <li>El profesor debera mantener la disciplina de sus estudiantes en el aula.</li>
-                  <li>Esta prohibido sentarse en las mesas.</li>
-                  <li>Esta prohibido mover cualquier equipo, monitor o periferico de lugar.</li>
-                  <li>Esta prohibido la manipulacion del datashow yo equipos de sonidos en las aulas.</li>
-                  <li>No se permiten mecerse en las sillas, ya que las mismas no estan diseñadas para tal fin.</li>
-                  <li>Favor no rayar muebles, ni paredes, van perdiendo belleza y afean tu ambiente de estudio.</li>
-                  
-              </ol>
-          </div>
-         
+    <div class="page-wrapper">
+      <div class="container animated bounceInUp" style="width: 100%">
+        <div class="header-wrapper">
+          <h1 class="title-list">Normas de laboratorio</h1>
         </div>
-        <div class="custom-select animated bounceInUp"> 
-            <label for="subject" class="Form-subject">Asignatura:</label>
-              <select name="subject" id="subject" class="select">
-                <option value="0"></option>
-                <option value="1">Materiales y procesos</option> 
-                <option value="2">Investigacion Operativa</option> 
-                <option value="3">Ingenieria asistida</option>
-                <option value="10">Potencia I</option> 
-                <option value="11">Potencia II</option> 
-                <option value="12">Analisis numerico</option> 
-          </select>
-
-          <label for="teacher" class="Form-teacher">Profesor:</label>
-              <select name="teacher" id="teacher" class="select">
-                <option value="0"></option>
-                <option value="1">Jose</option> 
-                <option value="2">juan</option> 
-                <option value="3">pedro</option>
-                <option value="10">Angelo</option> 
-                <option value="11">Leensan</option> 
-                <option value="12">Israel</option> 
-          </select>
-
-          <label for="seccion" class="Form-seccion">seccion:</label>
-              <select name="seccion" id="seccion" class="select">
-                <option value="0"></option>
-                <option value="1">1</option> 
-                <option value="2">2</option> 
-                <option value="3">3</option>
-                <option value="4">4</option> 
-                <option value="5">5</option> 
-                > 
-          </select>
-    </div>
-    <div class="button animated bounceInUp"">
-        <button onClick="acceptRules()" class="btn" id="btn">Aceptar</button>
-    </div>
-      </div>
-
+        <div class="rules-wrapper">
+          <ol class="rules-listing" id="rules-container"></ol>
+        </div>
+        <div class="bottom-wrapper">
+          <div class="custom-select"> 
+            <label for="subject" class="Form-subject">Materia:</label>
+            <select name="subject" id="subject-list" class="form-control custom-input">
+              <option value="-1" selected>Seleccione...</option>
+            </select>
       
-   
+            <label for="teacher" class="Form-teacher">Profesor:</label>
+            <select name="teacher" id="teacher-list" class="form-control custom-input " disabled=true></select>
+      
+            <label for="seccion" class="Form-seccion">Sección:</label>
+            <select name="seccion" id="section-list" class="form-control custom-input">
+              <option value="0"></option>
+              <option value="1">1</option> 
+              <option value="2">2</option> 
+              <option value="3">3</option>
+              <option value="4">4</option> 
+              <option value="5">5</option>
+            </select>
+          </div>
+          <div class="submit-btn-wrapper">
+              <button onclick="startAccepting(event)" class="submit-btn" id="accept-button">Aceptar</button>
+              <img width="100px" height="80px" id="loading-gif" src="../../public/images/loading-gif.gif" alt="INTEC | Loading gif image" style="display: none" />
+          </div>
+        </div>
+      </div>
+    </div>
 
-
-    
     <script>
       let windowData = undefined;
       const ipcRenderer = require('electron').ipcRenderer;
       ipcRenderer.send('rules-window-data-request', {});
 
-      const acceptRules = () => {
+      ipcRenderer.on('rules-window-data', (event, args) => {
+        console.log(args);
+        windowData = args;
+        if (!!windowData) {
+          // Set rules
+          setRules(windowData.rules);
+          // Set Subjects
+          setSubjects(windowData.subjects);
+        }
+      });
+      ipcRenderer.on('rules-has-been-accepted', (event, args) => {
+        console.log('Rules acceped!');
+        window.close();
+      })
+
+      const acceptRules = (selectedData) => {
         if (!!windowData) {
           console.log(windowData);
-          ipcRenderer.send('add-student-to-history', { userName:  windowData.user.username, userDomain: windowData.user.domain, trimester: windowData.trimester });
+          ipcRenderer.send('add-student-to-history', { userName:  windowData.user.username, userDomain: windowData.user.domain, trimester: windowData.trimester, selectedData: selectedData });
         } else {
           console.log('WindowData not defined');
         }
       }
+      function startAccepting(event) {
+        console.log('will start...');
+        let acceptButton = document.getElementById('accept-button');
+        acceptButton.style.display = 'none';
+        let loading = document.getElementById('loading-gif');
+        loading.style.display = 'block';
+        // get data
+        let subjectValue = document.getElementById('subject-list').value;
+        let teacherValue = document.getElementById('teacher-list').value;
+        let sectionValue = document.getElementById('section-list').value;
+        let selectedData = {subject: subjectValue, teacher: teacherValue, section: sectionValue};
+        console.log('Selected data: >>>>> ', selectedData);
+        // Validate data
 
-      ipcRenderer.on('rules-window-data', (event, args) => {
-        console.log(args);
-        windowData = args;
-      });
-      let btn = document.getElementById('btn');
-      btn.addEventListener( 'click' , () => {
-          let valor = document.getElementsByTagName("option").value;
-          console.log(valor);
-      });
-      
-
-      
+        // Accept rules
+        setTimeout(() => {
+          acceptRules(selectedData);
+        }, 1500);
+      }
+      function setRules(rules) {
+        let rulesContainer = document.getElementById('rules-container');
+        rules.forEach(r => {
+          let element = document.createElement('li');
+          element.innerHTML = r.text;
+          rulesContainer.appendChild(element);
+        })
+      }
+      function setSubjects(subjects) {
+        let subjectList = document.getElementById('subject-list');
+        subjects.forEach(s => {
+          let element = document.createElement('option');
+          element.value = s.code;
+          element.innerHTML = s.name;
+          subjectList.appendChild(element);
+        });
+        subjectList.addEventListener("change", () => {
+          console.log(subjectList.value);
+          if (subjectList.value !== "-1") {
+            // Fetch teachers and enable their selections
+            let filteredSubjects = subjects.filter(s => s.code === subjectList.value);
+            let teachers = [];
+            filteredSubjects.forEach(fs => {
+              let subTeachers = fs.teacherAssigned.split(';');
+              subTeachers.forEach(st => {
+                teachers.push(st);
+              })
+            })
+            console.log(filteredSubjects);
+            console.log(teachers);
+            if (!!teachers) {
+              setTeachers(teachers);
+            }
+          }
+        })
+      }
+      function setTeachers(teachers) {
+        let teacherList = document.getElementById('teacher-list');
+        teacherList.disabled = false;
+        // Clean list
+        while (teacherList.firstChild) {
+          teacherList.removeChild(teacherList.firstChild);
+        } // End cleaning
+        teachers.forEach(t => {
+          let element = document.createElement('option');
+          element.value = t;
+          element.innerHTML = t;
+          teacherList.appendChild(element);
+        });
+      }
     </script>
   </body>
 </html>

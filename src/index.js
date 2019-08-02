@@ -8,6 +8,8 @@ const os = require('os');
 const path = require('path');
 
 require('electron-reload')(__dirname);
+const unhandled = require('electron-unhandled');
+unhandled();
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -34,7 +36,7 @@ const showSurvey = (url, user) => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: true,
+    frame: false,
     fullscreen: true
   });
   ipcMain.on('survey-request-data', (e, args) => {
@@ -86,6 +88,11 @@ const showReminder = (user, APP_PREFERENCES) => {
     frame: false,
     resizable: false
   });
+  ipcMain.on('rulesReminder-window-data-request', (event, arg) => {
+    event.reply('rulesReminder-window-data', {
+      customText: APP_PREFERENCES.reminderText
+    })
+  });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.reminderPage}.html`));
   // window.webContents.openDevTools();
   window.on('close', () => {
@@ -96,6 +103,7 @@ const showReminder = (user, APP_PREFERENCES) => {
 
 const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
   const RULES = await queries.getRules();
+  const SUBJECTS = await queries.getSubjects();
   window = new BrowserWindow({
     width: 1100,
     height: 500,
@@ -103,13 +111,14 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
       nodeIntegration: true
     },
     alwaysOnTop: true,
-    frame: true,
+    frame: false,
     resizable: false,
     fullscreen: true
   });
   ipcMain.on('rules-window-data-request', (event, arg) => {
     event.reply('rules-window-data',{
       rules: RULES,
+      subjects: SUBJECTS,
       user: {
         username: userName,
         domain: userDomain
@@ -158,7 +167,9 @@ app.on('ready', async () => {
     showSurvey: configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value,
     studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
     teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
+    reminderText: configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value,
   }
+  console.log
 
   const USERS = (userDomain.toLowerCase() === "intec") ? await queries.getStudentInCurrentTrimester(currentTrimester[0], userName) : await queries.getTeacherInCurrentTrimester(currentTrimester[0], userName);
   const USER = USERS[0];
@@ -200,7 +211,9 @@ ipcMain.on('add-student-to-history', async (event, args) => {
       computer: os.hostname(),
       room: '',
       createdAt: Date.now(),
-      subject: '',
+      teacher: (!!args.selectedData && !!args.selectedData.teacher) ? args.selectedData.teacher : '',
+      subject: (!!args.selectedData && !!args.selectedData.subject) ? args.selectedData.subject : '',
+      section: (!!args.selectedData && !!args.selectedData.section && !!args.selectedData.section != 0) ? args.selectedData.section : '',
       trimesterName: args.trimester.name,
       domain: args.userDomain,
       hasFilledSurvey: false
@@ -219,4 +232,6 @@ ipcMain.on('add-student-to-history', async (event, args) => {
       hasFilledSurvey: false
     });
   }
+  // Tell the Rules view that rules has been accepted without validation. This is the best for User Experience.
+  event.reply('rules-has-been-accepted', {});
 })

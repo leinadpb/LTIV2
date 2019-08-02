@@ -1,9 +1,13 @@
 {
   "name": "lab-app",
   "productName": "lab-app",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "version": "1.0.1",
+  "description": "LABTI - INTEC: Lab rules and surveys.",
   "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leinadpb/LTIV2.git"
+  },
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -27,7 +31,9 @@
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
-            "darwin"
+            "darwin",
+            "windows",
+            "linux"
           ]
         },
         {
@@ -47,10 +53,12 @@
     "dotenv": "^8.0.0",
     "electron-reload": "^1.4.0",
     "electron-squirrel-startup": "^1.0.0",
+    "electron-unhandled": "^2.2.0",
     "ldapjs": "^1.0.2",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
-    "mongoose": "^5.6.1"
+    "mongoose": "^5.6.1",
+    "update-electron-app": "^1.5.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "6.0.0-beta.39",
