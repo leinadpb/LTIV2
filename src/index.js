@@ -157,8 +157,6 @@ app.on('ready', async () => {
   
   // get configs
   const configs = await queries.getConfigs();
-  // get trimestres
-  const trimesters = await queries.getTrimesters();
 
   const currentTrimester = await queries.getCurrentTrimester();
 
@@ -169,7 +167,6 @@ app.on('ready', async () => {
     teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
     reminderText: configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value,
   }
-  console.log
 
   const USERS = (userDomain.toLowerCase() === "intec") ? await queries.getStudentInCurrentTrimester(currentTrimester[0], userName) : await queries.getTeacherInCurrentTrimester(currentTrimester[0], userName);
   const USER = USERS[0];
@@ -203,6 +200,7 @@ app.on('activate', () => {
 
 ipcMain.on('add-student-to-history', async (event, args) => {
   console.log('Acceptting rules...', args);
+  console.log('trimester id: ', args.trimester._id.id);
   if (args.userDomain.toLowerCase() === "intec") {
     await queries.addStudent({
       name: args.userName,
@@ -215,6 +213,7 @@ ipcMain.on('add-student-to-history', async (event, args) => {
       subject: (!!args.selectedData && !!args.selectedData.subject) ? args.selectedData.subject : '',
       section: (!!args.selectedData && !!args.selectedData.section && !!args.selectedData.section != 0) ? args.selectedData.section : '',
       trimesterName: args.trimester.name,
+      trimesterId: mongoose.Types.ObjectId(args.trimester._id.id),
       domain: args.userDomain,
       hasFilledSurvey: false
     });
@@ -228,6 +227,7 @@ ipcMain.on('add-student-to-history', async (event, args) => {
       createdAt: Date.now(),
       subject: '',
       trimesterName: args.trimester.name,
+      trimesterId: mongoose.Types.ObjectId(args.trimester._id.id),
       domain: args.userDomain,
       hasFilledSurvey: false
     });

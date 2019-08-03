@@ -9,6 +9,7 @@ const historyTeacherSchema = mongoose.Schema({
   createdAt: Date,
   subject: String,
   trimesterName: String,
+  trimesterId: mongoose.Types.ObjectId,
   domain: String,
   hasFilledSurvey: Boolean
 });
