@@ -148,12 +148,12 @@ app.on('ready', async () => {
   const blackListedUsers = await queries.getBlackListUsers();
   const isUserBlackListed = blackListedUsers.find(u => u.intecId.toLowerCase() === userName.toLowerCase());
 
-  if (isUserBlackListed) {
+  // if (isUserBlackListed) {
     // Stop execution of the program.
-    console.log('You are blacklisted, so the program will close.');
-    app.quit();
-    return;
-  }
+    // console.log('You are blacklisted, so the program will close.');
+    // app.quit();
+   //  return;
+ //  }
   
   // get configs
   const configs = await queries.getConfigs();
@@ -169,7 +169,6 @@ app.on('ready', async () => {
     teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
     reminderText: configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value,
   }
-  console.log
 
   const USERS = (userDomain.toLowerCase() === "intec") ? await queries.getStudentInCurrentTrimester(currentTrimester[0], userName) : await queries.getTeacherInCurrentTrimester(currentTrimester[0], userName);
   const USER = USERS[0];
