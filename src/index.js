@@ -176,7 +176,9 @@ app.on('ready', async () => {
     showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
   } else {
     console.log(USER);
-    showReminder(USER, APP_PREFERENCES);
+    if (APP_PREFERENCES.showRulesReminder) {
+      showReminder(USER, APP_PREFERENCES);
+    }
   }
   
   // Execute this code to Close any browser. So user first completes this process and then,
@@ -235,3 +237,4 @@ ipcMain.on('add-student-to-history', async (event, args) => {
   // Tell the Rules view that rules has been accepted without validation. This is the best for User Experience.
   event.reply('rules-has-been-accepted', {});
 })
+ 
