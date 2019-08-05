@@ -157,8 +157,6 @@ app.on('ready', async () => {
   
   // get configs
   const configs = await queries.getConfigs();
-  // get trimestres
-  const trimesters = await queries.getTrimesters();
 
   const currentTrimester = await queries.getCurrentTrimester();
 
@@ -178,7 +176,9 @@ app.on('ready', async () => {
     showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
   } else {
     console.log(USER);
-    showReminder(USER, APP_PREFERENCES);
+    if (APP_PREFERENCES.showRulesReminder) {
+      showReminder(USER, APP_PREFERENCES);
+    }
   }
   
   // Execute this code to Close any browser. So user first completes this process and then,
@@ -202,6 +202,7 @@ app.on('activate', () => {
 
 ipcMain.on('add-student-to-history', async (event, args) => {
   console.log('Acceptting rules...', args);
+  console.log('trimester id: ', args.trimester._id.id);
   if (args.userDomain.toLowerCase() === "intec") {
     await queries.addStudent({
       name: args.userName,
@@ -214,6 +215,7 @@ ipcMain.on('add-student-to-history', async (event, args) => {
       subject: (!!args.selectedData && !!args.selectedData.subject) ? args.selectedData.subject : '',
       section: (!!args.selectedData && !!args.selectedData.section && !!args.selectedData.section != 0) ? args.selectedData.section : '',
       trimesterName: args.trimester.name,
+      trimesterId: mongoose.Types.ObjectId(args.trimester._id.id),
       domain: args.userDomain,
       hasFilledSurvey: false
     });
@@ -227,6 +229,7 @@ ipcMain.on('add-student-to-history', async (event, args) => {
       createdAt: Date.now(),
       subject: '',
       trimesterName: args.trimester.name,
+      trimesterId: mongoose.Types.ObjectId(args.trimester._id.id),
       domain: args.userDomain,
       hasFilledSurvey: false
     });
@@ -234,3 +237,4 @@ ipcMain.on('add-student-to-history', async (event, args) => {
   // Tell the Rules view that rules has been accepted without validation. This is the best for User Experience.
   event.reply('rules-has-been-accepted', {});
 })
+ 
