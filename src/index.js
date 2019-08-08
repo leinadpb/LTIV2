@@ -166,6 +166,7 @@ app.on('ready', async () => {
     studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
     teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
     reminderText: configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value,
+    showRulesReminder: configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder).value,
   }
 
   const USERS = (userDomain.toLowerCase() === "intec") ? await queries.getStudentInCurrentTrimester(currentTrimester[0], userName) : await queries.getTeacherInCurrentTrimester(currentTrimester[0], userName);
@@ -176,8 +177,10 @@ app.on('ready', async () => {
     showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
   } else {
     console.log(USER);
-    if (APP_PREFERENCES.showRulesReminder) {
+    if (APP_PREFERENCES.showRulesReminder.toLowerCase() === "true") {
       showReminder(USER, APP_PREFERENCES);
+    } else {
+      app.quit();
     }
   }
   
