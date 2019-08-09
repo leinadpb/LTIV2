@@ -25,7 +25,6 @@ let canQuitApp = false;
 
 const executeJobs = () => {
   killBrowsers.execute();
-  test.execute();
 }
 
 const showSurvey = (url, user) => {
@@ -186,9 +185,9 @@ app.on('ready', async () => {
   
   // Execute this code to Close any browser. So user first completes this process and then,
   //  can use the computer.
-  // jobs = setInterval(() => {
-  //   executeJobs();
-  // }, 5000);
+  jobs = setInterval(() => {
+    executeJobs();
+  }, 3000);
 });
 
 app.on('window-all-closed', () => {
