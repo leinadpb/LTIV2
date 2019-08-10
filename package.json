@@ -1,7 +1,7 @@
 {
-  "name": "lab-app",
-  "productName": "lab-app",
-  "version": "1.0.1",
+  "name": "labapp",
+  "productName": "labapp",
+  "version": "1.0.0",
   "description": "LABTI - INTEC: Lab rules and surveys.",
   "main": "src/index.js",
   "repository": {
@@ -13,10 +13,11 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "echo \"No linting configured\"",
+    "build-win": "node ./src/helpers/generate_windows.js"
   },
   "keywords": [],
-  "author": "ppgdeveloper2",
+  "author": "INTEC",
   "license": "MIT",
   "config": {
     "forge": {
@@ -25,7 +26,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "lab_app"
+            "name": "labapp"
           }
         },
         {
@@ -66,6 +67,7 @@
     "@electron-forge/maker-rpm": "6.0.0-beta.39",
     "@electron-forge/maker-squirrel": "6.0.0-beta.39",
     "@electron-forge/maker-zip": "6.0.0-beta.39",
-    "electron": "5.0.5"
+    "electron": "5.0.5",
+    "electron-winstaller": "^4.0.0"
   }
 }

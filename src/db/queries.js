@@ -109,7 +109,7 @@ const addTeacher = (teacher) => {
       return null;
     }
     return doc;
-  }).lean().exec();
+  });
 }
 const getTeacherInCurrentTrimester = async (currentTrimester, userName) => {
   // TODO: Get student with createdAt date betwwen current trimester

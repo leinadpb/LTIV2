@@ -160,13 +160,14 @@ app.on('ready', async () => {
   const currentTrimester = await queries.getCurrentTrimester();
 
   const APP_PREFERENCES = {
-    fullscreen: configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value,
-    showSurvey: configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value,
-    studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
-    teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
-    reminderText: configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value,
-    showRulesReminder: configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder).value,
+    fullscreen: !!configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen) ? configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value : '',
+    showSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey) ? configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value : '',
+    studentUrl: !!configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value : '',
+    teacherUrl:  !!configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value : '',
+    reminderText: !!configs.find(cfg => cfg.key === settings.CONFIGS.reminderText) ? configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value : '',
+    showRulesReminder: !!configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder) ? configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder).value : '',
   }
+
 
   const USERS = (userDomain.toLowerCase() === "intec") ? await queries.getStudentInCurrentTrimester(currentTrimester[0], userName) : await queries.getTeacherInCurrentTrimester(currentTrimester[0], userName);
   const USER = USERS[0];
@@ -185,9 +186,9 @@ app.on('ready', async () => {
   
   // Execute this code to Close any browser. So user first completes this process and then,
   //  can use the computer.
-  jobs = setInterval(() => {
-    executeJobs();
-  }, 3000);
+  // jobs = setInterval(() => {
+  //   executeJobs();
+  // }, 3000);
 });
 
 app.on('window-all-closed', () => {
