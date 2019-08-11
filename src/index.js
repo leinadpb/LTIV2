@@ -123,20 +123,28 @@ const showSurvey = (url, user) => {
 const showSurveyOrClose = async (userName, userDomain, APP_PREFERENCES) => {
   const user = (await queries.getUser(userName, userDomain)).data.data;
   console.log('User obtained on show survey before: ', user);
-  if (APP_PREFERENCES.showSurvey) {
-    if (!user.hasFilledSurvey) {
-      if (user.domain.toLowerCase() === "intec") {
+  if (userDomain.toLowerCase() === "intec") {
+    if (APP_PREFERENCES.activateStudentSurvey) {
+      if (!user.hasFilledSurvey) {
         showSurvey(APP_PREFERENCES.studentUrl, user);
       } else {
-        showSurvey(APP_PREFERENCES.teacherUrl, user);
+        canQuitApp = true;
+        app.quit();
       }
     } else {
-      canQuitApp = true;
       app.quit();
     }
   } else {
-    canQuitApp = true;
-    app.quit();
+    if(APP_PREFERENCES.activateTeacherSurvey) {
+      if (!user.hasFilledSurvey) {
+        showSurvey(APP_PREFERENCES.teacherUrl, user);
+      } else {
+        canQuitApp = true;
+        app.quit();
+      }
+    } else {
+      app.quit();
+    }
   }
 }
 
@@ -227,7 +235,11 @@ app.on('ready', async () => {
       teacherUrl:  !!configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value : '',
       reminderText: !!configs.find(cfg => cfg.key === settings.CONFIGS.reminderText) ? configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value : '',
       showRulesReminder: !!configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder) ? configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder).value : '',
+      activateStudentSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.activateStudentSurvey) ? (configs.find(cfg => cfg.key === settings.CONFIGS.activateStudentSurvey).value.toLowerCase() === "true") ? true : false : true,
+      activateTeacherSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey) ? (configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey).value.toLowerCase() === "true") ? true : false : true,
     }
+
+    console.log(APP_PREFERENCES);
 
 
     const USERS = (userDomain.toLowerCase() === "intec") ? (await _queries.getStudentInCurrentTrimester(currentTrimester[0], userName)).data.data : (await _queries.getTeacherInCurrentTrimester(currentTrimester[0], userName)).data.data;
