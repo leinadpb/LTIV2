@@ -183,6 +183,7 @@ app.on('ready', async () => {
       }
     }
 
+    // TODO: Move this to a child_process ----->
     // Execute this code to Close any browser. So user first completes this process and then,
     //  can use the computer.
     // jobs = setInterval(() => {
