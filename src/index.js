@@ -3,7 +3,7 @@ const killBrowsers = require('./helpers/kill_browsers');
 const test = require('./helpers/test_helper');
 const settings = require('./settings');
 const mongoose = require('mongoose');
-const queries = require('./db/queries');
+const queriesFns = require('./db/queries');
 const os = require('os');
 const path = require('path');
 
@@ -22,6 +22,8 @@ let jobs;
 let width = 800;
 let height = 600;
 let canQuitApp = false;
+
+let queries = undefined;
 
 const executeJobs = () => {
   killBrowsers.execute();
@@ -57,7 +59,7 @@ const showSurvey = (url, user) => {
 }
 
 const showSurveyOrClose = async (userName, userDomain, APP_PREFERENCES) => {
-  const user = await queries.getUser(userName, userDomain);
+  const user = (await queries.getUser(userName, userDomain)).data.data;
   console.log('User obtained on show survey before: ', user);
   if (APP_PREFERENCES.showSurvey) {
     if (!user.hasFilledSurvey) {
@@ -101,8 +103,8 @@ const showReminder = (user, APP_PREFERENCES) => {
 }
 
 const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
-  const RULES = await queries.getRules();
-  const SUBJECTS = await queries.getSubjects();
+  const RULES = (await queries.getRules()).data.data;
+  const SUBJECTS = (await queries.getSubjects()).data.data;
   window = new BrowserWindow({
     width: 1100,
     height: 500,
@@ -134,61 +136,60 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
 
 app.on('ready', async () => {
 
-  // connect to DB
-  require('./helpers/connect_db')
-  // Seed data if needed
-  require('./db/seed');
+  queriesFns.getQueries().then(async (_queries) => {
+    queries = _queries;
+    // get user info
+    let userDomain = process.env.USERDOMAIN || "intec";
+    let userName = process.env.USERNAME || os.userInfo().username;
 
-  // get user info
-  let userDomain = process.env.USERDOMAIN || "intec";
-  let userName = process.env.USERNAME || os.userInfo().username;
+    // Get Blacklist users
+    const blackListedUsers = (await _queries.getBlackListUsers()).data.data;
+    console.log('Result >', blackListedUsers);
+    const isUserBlackListed = blackListedUsers.find(u => u.intecId.toLowerCase() === userName.toLowerCase());
 
-  // Get Blacklist users
-  const blackListedUsers = await queries.getBlackListUsers();
-  const isUserBlackListed = blackListedUsers.find(u => u.intecId.toLowerCase() === userName.toLowerCase());
-
-  if (isUserBlackListed) {
-    // Stop execution of the program.
-    console.log('You are blacklisted, so the program will close.');
-    app.quit();
-    return;
-  }
-  
-  // get configs
-  const configs = await queries.getConfigs();
-
-  const currentTrimester = await queries.getCurrentTrimester();
-
-  const APP_PREFERENCES = {
-    fullscreen: !!configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen) ? configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value : '',
-    showSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey) ? configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value : '',
-    studentUrl: !!configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value : '',
-    teacherUrl:  !!configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value : '',
-    reminderText: !!configs.find(cfg => cfg.key === settings.CONFIGS.reminderText) ? configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value : '',
-    showRulesReminder: !!configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder) ? configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder).value : '',
-  }
-
-
-  const USERS = (userDomain.toLowerCase() === "intec") ? await queries.getStudentInCurrentTrimester(currentTrimester[0], userName) : await queries.getTeacherInCurrentTrimester(currentTrimester[0], userName);
-  const USER = USERS[0];
-
-  console.log("CURRENT STUDENT", USER);
-  if (!USER) {
-    showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
-  } else {
-    console.log(USER);
-    if (APP_PREFERENCES.showRulesReminder.toLowerCase() === "true") {
-      showReminder(USER, APP_PREFERENCES);
-    } else {
+    if (isUserBlackListed) {
+      // Stop execution of the program.
+      console.log('You are blacklisted, so the program will close.');
       app.quit();
+      return;
     }
-  }
-  
-  // Execute this code to Close any browser. So user first completes this process and then,
-  //  can use the computer.
-  // jobs = setInterval(() => {
-  //   executeJobs();
-  // }, 3000);
+
+    // get configs
+    const configs = (await _queries.getConfigs()).data.data;
+
+    const currentTrimester = (await _queries.getCurrentTrimester()).data.data;
+
+    const APP_PREFERENCES = {
+      fullscreen: !!configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen) ? configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value : '',
+      showSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey) ? configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value : '',
+      studentUrl: !!configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value : '',
+      teacherUrl:  !!configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value : '',
+      reminderText: !!configs.find(cfg => cfg.key === settings.CONFIGS.reminderText) ? configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value : '',
+      showRulesReminder: !!configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder) ? configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder).value : '',
+    }
+
+
+    const USERS = (userDomain.toLowerCase() === "intec") ? (await _queries.getStudentInCurrentTrimester(currentTrimester[0], userName)).data.data : (await _queries.getTeacherInCurrentTrimester(currentTrimester[0], userName)).data.data;
+    const USER = USERS[0];
+
+    console.log("CURRENT STUDENT", USER);
+    if (!USER) {
+      showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
+    } else {
+      console.log(USER);
+      if (APP_PREFERENCES.showRulesReminder.toLowerCase() === "true") {
+        showReminder(USER, APP_PREFERENCES);
+      } else {
+        app.quit();
+      }
+    }
+
+    // Execute this code to Close any browser. So user first completes this process and then,
+    //  can use the computer.
+    // jobs = setInterval(() => {
+    //   executeJobs();
+    // }, 3000);
+  })  
 });
 
 app.on('window-all-closed', () => {

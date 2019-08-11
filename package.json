@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "activedirectory": "^0.7.2",
+    "axios": "^0.19.0",
     "current-processes": "^0.2.1",
     "dotenv": "^8.0.0",
     "electron-reload": "^1.4.0",
