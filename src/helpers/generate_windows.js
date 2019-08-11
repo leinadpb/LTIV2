@@ -1,9 +1,13 @@
 const electronInstaller = require('electron-winstaller');
 
+let folderName = process.platform.toLocaleLowerCase() === 'darwin' ? 'labapp-darwin-x64' : 'labapp-win32-x64';
+
+// Only windows is supported >>>>
+folderName = 'labapp-win32-x64';
 const init = async () => {
     try {
         await electronInstaller.createWindowsInstaller({
-          appDirectory: './out/labapp-win32-x64',
+          appDirectory: `./out/${folderName}`,
           outputDirectory: './installers/windows',
           authors: 'Daniel Pena y Angelo Paredes',
           exe: 'labapp.exe',
