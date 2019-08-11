@@ -144,7 +144,6 @@ app.on('ready', async () => {
 
     // Get Blacklist users
     const blackListedUsers = (await _queries.getBlackListUsers()).data.data;
-    console.log('Result >', blackListedUsers);
     const isUserBlackListed = blackListedUsers.find(u => u.intecId.toLowerCase() === userName.toLowerCase());
 
     if (isUserBlackListed) {
