@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const PAGES = {
   startPage: 'start',
   rulesPage: 'rules',
@@ -17,8 +19,10 @@ const CONFIGS = {
   allowSelectCustomData: 'ALLOW_SELECT_CUSTOM_DATA',
 }
 
+const SERVER_HOST = process.env.SERVER_HOST;
+const SERVER_PORT = process.env.SERVER_PORT;
 const API = {
-  baseURL: 'http://localhost:8700/api/v1',
+  baseURL: `http://${SERVER_HOST}:${SERVER_PORT}/api/v1`,
   endpoints: {
     config: {
       getConfigs: '/configs', // GET
