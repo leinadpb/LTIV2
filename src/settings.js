@@ -1,5 +1,12 @@
 require('dotenv').config();
 
+let envs = process.env;
+try {
+  envs = require('../../environments.js');
+} catch (ex) {
+  console.log('Please, create environments.js file (with all needed environments variables) in the root project before deploying to production: ', ex);
+}
+
 const PAGES = {
   startPage: 'start',
   rulesPage: 'rules',
@@ -19,8 +26,8 @@ const CONFIGS = {
   allowSelectCustomData: 'ALLOW_SELECT_CUSTOM_DATA',
 }
 
-const SERVER_HOST = process.env.SERVER_HOST;
-const SERVER_PORT = process.env.SERVER_PORT;
+const SERVER_HOST = envs.SERVER_HOST;
+const SERVER_PORT = envs.SERVER_PORT;
 const API = {
   baseURL: `http://${SERVER_HOST}:${SERVER_PORT}/api/v1`,
   endpoints: {
