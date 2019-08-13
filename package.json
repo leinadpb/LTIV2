@@ -1,7 +1,7 @@
 {
-  "name": "lab-app",
-  "productName": "lab-app",
-  "version": "1.0.1",
+  "name": "labapp",
+  "productName": "labapp",
+  "version": "1.0.0",
   "description": "LABTI - INTEC: Lab rules and surveys.",
   "main": "src/index.js",
   "repository": {
@@ -11,12 +11,13 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make",
+    "make": "electron-forge make --platform=win32 --arch=x64",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "echo \"No linting configured\"",
+    "build-win": "node ./src/helpers/generate_windows_wix.js"
   },
   "keywords": [],
-  "author": "ppgdeveloper2",
+  "author": "INTEC",
   "license": "MIT",
   "config": {
     "forge": {
@@ -25,7 +26,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "lab_app"
+            "name": "labapp"
           }
         },
         {
@@ -45,15 +46,22 @@
           "config": {}
         }
       ]
+    },
+    "electronWinstallerConfig": {
+      "name": "labapp V 1.0.0 ",
+      "certificateFile": "./cert.pfx",
+      "setupIcon": "./src/images/labti-logo.ico"
     }
   },
   "dependencies": {
     "activedirectory": "^0.7.2",
+    "axios": "^0.19.0",
     "current-processes": "^0.2.1",
     "dotenv": "^8.0.0",
     "electron-reload": "^1.4.0",
     "electron-squirrel-startup": "^1.0.0",
     "electron-unhandled": "^2.2.0",
+    "electron-wix-msi": "^2.1.1",
     "ldapjs": "^1.0.2",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
@@ -66,6 +74,7 @@
     "@electron-forge/maker-rpm": "6.0.0-beta.39",
     "@electron-forge/maker-squirrel": "6.0.0-beta.39",
     "@electron-forge/maker-zip": "6.0.0-beta.39",
-    "electron": "5.0.5"
+    "electron": "5.0.5",
+    "electron-winstaller": "^4.0.0"
   }
 }

@@ -165,6 +165,7 @@
       const setWindowData = () => {
         document.getElementById("user-id").innerHTML = windowData.user.fullName;
         document.getElementById("trimester-name").innerHTML = windowData.user.trimesterName;
+        document.getElementById("survey-iframe").src = windowData.url;
       }
 
       function iframeChange(e) {

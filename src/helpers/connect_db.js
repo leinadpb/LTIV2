@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
-const envs = require('../../environments');
 
+let envs = process.env;
+try {
+  envs = require('../../environments.js');
+} catch (ex) {
+  console.log('Please, create environments.js file (with all needed environments variables) in the root project before deploying to production: ', ex);
+}
 console.log(envs.CONNECTION_STRING);
 const db = envs.CONNECTION_STRING;
 

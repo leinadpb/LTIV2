@@ -3,7 +3,7 @@ const killBrowsers = require('./helpers/kill_browsers');
 const test = require('./helpers/test_helper');
 const settings = require('./settings');
 const mongoose = require('mongoose');
-const queries = require('./db/queries');
+const queriesFns = require('./db/queries');
 const os = require('os');
 const path = require('path');
 
@@ -11,9 +11,71 @@ require('electron-reload')(__dirname);
 const unhandled = require('electron-unhandled');
 unhandled();
 
-if (require('electron-squirrel-startup')) {
-  app.quit();
+if (handleSquirrelEvent()) {
+  return;
 }
+
+function handleSquirrelEvent() {
+  if (process.argv.length === 1) {
+    return false;
+  }
+
+  const ChildProcess = require('child_process');
+  const path = require('path');
+
+  const appFolder = path.resolve(process.execPath, '..');
+  const rootAtomFolder = path.resolve(appFolder, '..');
+  const updateDotExe = path.resolve(path.join(rootAtomFolder, 'Update.exe'));
+  const exeName = path.basename(process.execPath);
+
+  const spawn = function(command, args) {
+    let spawnedProcess, error;
+
+    try {
+      spawnedProcess = ChildProcess.spawn(command, args, {detached: true});
+    } catch (error) {}
+
+    return spawnedProcess;
+  };
+
+  const spawnUpdate = function(args) {
+    return spawn(updateDotExe, args);
+  };
+
+  const squirrelEvent = process.argv[1];
+  switch (squirrelEvent) {
+    case '--squirrel-install':
+    case '--squirrel-updated':
+      // Optionally do things such as:
+      // - Add your .exe to the PATH
+      // - Write to the registry for things like file associations and
+      //   explorer context menus
+
+      // Install desktop and start menu shortcuts
+      spawnUpdate(['--createShortcut', exeName]);
+
+      setTimeout(app.quit, 1000);
+      return true;
+
+    case '--squirrel-uninstall':
+      // Undo anything you did in the --squirrel-install and
+      // --squirrel-updated handlers
+
+      // Remove desktop and start menu shortcuts
+      spawnUpdate(['--removeShortcut', exeName]);
+
+      setTimeout(app.quit, 1000);
+      return true;
+
+    case '--squirrel-obsolete':
+      // This is called on the outgoing version of your app before
+      // we update to the new version - it's the opposite of
+      // --squirrel-updated
+
+      app.quit();
+      return true;
+  }
+};
 
 require('dotenv').config();
 
@@ -23,9 +85,10 @@ let width = 800;
 let height = 600;
 let canQuitApp = false;
 
+let queries = undefined;
+
 const executeJobs = () => {
   killBrowsers.execute();
-  test.execute();
 }
 
 const showSurvey = (url, user) => {
@@ -58,22 +121,30 @@ const showSurvey = (url, user) => {
 }
 
 const showSurveyOrClose = async (userName, userDomain, APP_PREFERENCES) => {
-  const user = await queries.getUser(userName, userDomain);
+  const user = (await queries.getUser(userName, userDomain)).data.data;
   console.log('User obtained on show survey before: ', user);
-  if (APP_PREFERENCES.showSurvey) {
-    if (!user.hasFilledSurvey) {
-      if (user.domain.toLowerCase() === "intec") {
+  if (userDomain.toLowerCase() === "intec") {
+    if (APP_PREFERENCES.activateStudentSurvey) {
+      if (!user.hasFilledSurvey) {
         showSurvey(APP_PREFERENCES.studentUrl, user);
       } else {
-        showSurvey(APP_PREFERENCES.teacherUrl, user);
+        canQuitApp = true;
+        app.quit();
       }
     } else {
-      canQuitApp = true;
       app.quit();
     }
   } else {
-    canQuitApp = true;
-    app.quit();
+    if(APP_PREFERENCES.activateTeacherSurvey) {
+      if (!user.hasFilledSurvey) {
+        showSurvey(APP_PREFERENCES.teacherUrl, user);
+      } else {
+        canQuitApp = true;
+        app.quit();
+      }
+    } else {
+      app.quit();
+    }
   }
 }
 
@@ -102,8 +173,8 @@ const showReminder = (user, APP_PREFERENCES) => {
 }
 
 const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
-  const RULES = await queries.getRules();
-  const SUBJECTS = await queries.getSubjects();
+  const RULES = (await queries.getRules()).data.data;
+  const SUBJECTS = (await queries.getSubjects()).data.data;
   window = new BrowserWindow({
     width: 1100,
     height: 500,
@@ -135,57 +206,64 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
 
 app.on('ready', async () => {
 
-  // connect to DB
-  require('./helpers/connect_db')
-  // Seed data if needed
-  require('./db/seed');
+  queriesFns.getQueries().then(async (_queries) => {
+    queries = _queries;
+    // get user info
+    let userDomain = process.env.USERDOMAIN || "intec";
+    let userName = process.env.USERNAME || os.userInfo().username;
 
-  // get user info
-  let userDomain = process.env.USERDOMAIN || "intec";
-  let userName = process.env.USERNAME || os.userInfo().username;
+    // Get Blacklist users
+    const blackListedUsers = (await _queries.getBlackListUsers()).data.data;
+    const isUserBlackListed = blackListedUsers.find(u => u.intecId.toLowerCase() === userName.toLowerCase());
 
-  // Get Blacklist users
-  const blackListedUsers = await queries.getBlackListUsers();
-  const isUserBlackListed = blackListedUsers.find(u => u.intecId.toLowerCase() === userName.toLowerCase());
-
-  // if (isUserBlackListed) {
-    // Stop execution of the program.
-    // console.log('You are blacklisted, so the program will close.');
-    // app.quit();
-   //  return;
- //  }
-  
-  // get configs
-  const configs = await queries.getConfigs();
-
-  const currentTrimester = await queries.getCurrentTrimester();
-
-  const APP_PREFERENCES = {
-    fullscreen: configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value,
-    showSurvey: configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value,
-    studentUrl: configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value,
-    teacherUrl: configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value,
-    reminderText: configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value,
-  }
-
-  const USERS = (userDomain.toLowerCase() === "intec") ? await queries.getStudentInCurrentTrimester(currentTrimester[0], userName) : await queries.getTeacherInCurrentTrimester(currentTrimester[0], userName);
-  const USER = USERS[0];
-
-  console.log("CURRENT STUDENT", USER);
-  if (!USER) {
-    showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
-  } else {
-    console.log(USER);
-    if (APP_PREFERENCES.showRulesReminder) {
-      showReminder(USER, APP_PREFERENCES);
+    if (isUserBlackListed) {
+      // Stop execution of the program.
+      console.log('You are blacklisted, so the program will close.');
+      app.quit();
+      return;
     }
-  }
-  
-  // Execute this code to Close any browser. So user first completes this process and then,
-  //  can use the computer.
-  // jobs = setInterval(() => {
-  //   executeJobs();
-  // }, 5000);
+
+ 
+    const configs = (await _queries.getConfigs()).data.data;
+
+    const currentTrimester = (await _queries.getCurrentTrimester()).data.data;
+
+    const APP_PREFERENCES = {
+      fullscreen: !!configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen) ? configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value : '',
+      showSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey) ? configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value : '',
+      studentUrl: !!configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value : '',
+      teacherUrl:  !!configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value : '',
+      reminderText: !!configs.find(cfg => cfg.key === settings.CONFIGS.reminderText) ? configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value : '',
+      showRulesReminder: !!configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder) ? configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder).value : '',
+      activateStudentSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.activateStudentSurvey) ? (configs.find(cfg => cfg.key === settings.CONFIGS.activateStudentSurvey).value.toLowerCase() === "true") ? true : false : true,
+      activateTeacherSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey) ? (configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey).value.toLowerCase() === "true") ? true : false : true,
+    }
+
+    console.log(APP_PREFERENCES);
+
+
+    const USERS = (userDomain.toLowerCase() === "intec") ? (await _queries.getStudentInCurrentTrimester(currentTrimester[0], userName)).data.data : (await _queries.getTeacherInCurrentTrimester(currentTrimester[0], userName)).data.data;
+    const USER = USERS[0];
+
+    console.log("CURRENT STUDENT", USER);
+    if (!USER) {
+      showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
+    } else {
+      console.log(USER);
+      if (APP_PREFERENCES.showRulesReminder.toLowerCase() === "true") {
+        showReminder(USER, APP_PREFERENCES);
+      } else {
+        app.quit();
+      }
+    }
+
+    // TODO: Move this to a child_process ----->
+    // Execute this code to Close any browser. So user first completes this process and then,
+    //  can use the computer.
+    // jobs = setInterval(() => {
+    //   executeJobs();
+    // }, 3000);
+  })  
 });
 
 app.on('window-all-closed', () => {
@@ -236,5 +314,5 @@ ipcMain.on('add-student-to-history', async (event, args) => {
   }
   // Tell the Rules view that rules has been accepted without validation. This is the best for User Experience.
   event.reply('rules-has-been-accepted', {});
-})
+});
  
