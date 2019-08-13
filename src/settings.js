@@ -2,7 +2,7 @@ require('dotenv').config();
 
 let envs = process.env;
 try {
-  envs = require('../../environments.js');
+  envs = require('../environments.js');
 } catch (ex) {
   console.log('Please, create environments.js file (with all needed environments variables) in the root project before deploying to production: ', ex);
 }
