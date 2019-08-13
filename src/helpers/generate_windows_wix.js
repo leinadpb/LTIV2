@@ -20,8 +20,17 @@ const msiCreator = new MSI.MSICreator({
 
 (async () => {
   // Step 2: Create a .wxs template file
-  await msiCreator.create();
+  try {
+    await msiCreator.create();
 
-  // Step 3: Compile the template to a .msi file
-  await msiCreator.compile();
+    try {
+      // Step 3: Compile the template to a .msi file
+      await msiCreator.compile();
+    } catch(err) {
+      console.log('Error compiling .wxs file >>>', err);
+    }
+  } catch(err) {
+    console.log('Error creating .wxs file >>>>', err);
+  }
+  
 })();
