@@ -1,11 +1,11 @@
-const MSICreator = require('electron-wix-msi');
+const MSI = require('electron-wix-msi');
 
 let folderName = process.platform.toLocaleLowerCase() === 'darwin' ? 'labapp-darwin-x64' : 'labapp-win32-x64';
 // Only windows is supported >>>>
 folderName = 'labapp-win32-x64';
 
 // Step 1: Instantiate the MSICreator
-const msiCreator = new MSICreator({
+const msiCreator = new MSI.MSICreator({
   appDirectory: `./out/${folderName}`,
   description: 'App for rules and surveys data for LTI students and teachers.',
   exe: 'labapp',
