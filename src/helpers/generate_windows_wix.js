@@ -18,8 +18,10 @@ const msiCreator = new MSICreator({
   }
 });
 
-// Step 2: Create a .wxs template file
-await msiCreator.create();
+(async () => {
+  // Step 2: Create a .wxs template file
+  await msiCreator.create();
 
-// Step 3: Compile the template to a .msi file
-await msiCreator.compile();
+  // Step 3: Compile the template to a .msi file
+  await msiCreator.compile();
+})();
