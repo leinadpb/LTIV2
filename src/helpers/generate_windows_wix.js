@@ -1,11 +1,11 @@
-const MSICreator = require('electron-wix-msi');
+const MSI = require('electron-wix-msi');
 
 let folderName = process.platform.toLocaleLowerCase() === 'darwin' ? 'labapp-darwin-x64' : 'labapp-win32-x64';
 // Only windows is supported >>>>
 folderName = 'labapp-win32-x64';
 
 // Step 1: Instantiate the MSICreator
-const msiCreator = new MSICreator({
+const msiCreator = new MSI.MSICreator({
   appDirectory: `./out/${folderName}`,
   description: 'App for rules and surveys data for LTI students and teachers.',
   exe: 'labapp',
@@ -18,8 +18,19 @@ const msiCreator = new MSICreator({
   }
 });
 
-// Step 2: Create a .wxs template file
-await msiCreator.create();
+(async () => {
+  // Step 2: Create a .wxs template file
+  try {
+    await msiCreator.create();
 
-// Step 3: Compile the template to a .msi file
-await msiCreator.compile();
+    try {
+      // Step 3: Compile the template to a .msi file
+      await msiCreator.compile();
+    } catch(err) {
+      console.log('Error compiling .wxs file >>>', err);
+    }
+  } catch(err) {
+    console.log('Error creating .wxs file >>>>', err);
+  }
+  
+})();
