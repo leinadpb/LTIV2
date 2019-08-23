@@ -16,7 +16,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.get(EPS.config.getConfigs)
     } catch (e) {
-      console.log('getConfigs query error: ', e);
+      log.error('getConfigs query error: ', e);
       return null;
     }
   }
@@ -26,7 +26,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         config: config
       })
     } catch (e) {
-      console.log('updateConfig query error: ', e);
+      log.error('updateConfig query error: ', e);
       return null;
     }
   }
@@ -36,7 +36,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         preferences: preferences
       })
     } catch (e) {
-      console.log('updatePreferences query error: ', e);
+      log.error('updatePreferences query error: ', e);
       return null;
     }
   }
@@ -46,7 +46,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.get(EPS.rule.getRules)
     } catch(e) {
-      console.log('getRules query error: ', e);
+      log.error('getRules query error: ', e);
       return null;
     }
   }
@@ -54,7 +54,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.post(EPS.rule.getRules, { rule: rule })
     } catch(e) {
-      console.log('updateRule query error: ', e);
+      log.error('updateRule query error: ', e);
       return null;
     }
   }
@@ -62,7 +62,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.delete(EPS.rule.deleteRule, { rule: rule })
     } catch(e) {
-      console.log('deleteRule query error: ', e);
+      log.error('deleteRule query error: ', e);
       return null;
     }
   }
@@ -70,7 +70,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.post(EPS.rule.addRule, { rule: rule })
     } catch(e) {
-      console.log('addRule query error: ', e);
+      log.error('addRule query error: ', e);
       return null;
     }
   }
@@ -78,7 +78,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.post(EPS.rule.updateRuleByText, { rule: rule })
     } catch(e) {
-      console.log('updateRuleByText query error: ', e);
+      log.error('updateRuleByText query error: ', e);
       return null;
     }
   }
@@ -86,7 +86,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.post(EPS.rule.updateRulesNumbers, { rules: rules })
     } catch(e) {
-      console.log('updateRulesNumbers query error: ', e);
+      log.error('updateRulesNumbers query error: ', e);
       return null;
     }
   }
@@ -96,7 +96,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.get(EPS.trimester.getTrimesters)
     } catch(e) {
-      console.log('getTrimesters query error: ', e);
+      log.error('getTrimesters query error: ', e);
       return null;
     }
   }
@@ -104,7 +104,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.put(EPS.trimester.updateTrimester, { trimester: trimester })
     } catch(e) {
-      console.log('updateTrimester query error: ', e);
+      log.error('updateTrimester query error: ', e);
       return null;
     }
   }
@@ -112,7 +112,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.post(EPS.trimester.addTrimester, { trimester: trimester })
     } catch(e) {
-      console.log('addTrimester query error: ', e);
+      log.error('addTrimester query error: ', e);
       return null;
     }
   }
@@ -120,7 +120,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.get(EPS.trimester.getCurrentTrimester)
     } catch(e) {
-      console.log('getCurrentTrimester query error: ', e);
+      log.error('getCurrentTrimester query error: ', e);
       return null;
     }
   }
@@ -130,7 +130,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.get(EPS.student.getHistoryStudents)
     } catch(e) {
-      console.log('getHistoryStudents query error: ', e);
+      log.error('getHistoryStudents query error: ', e);
       return null;
     }
   }
@@ -140,7 +140,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         filterObj: filterObject
       })
     } catch(e) {
-      console.log('getHistoryStudentsFiltered query error: ', e);
+      log.error('getHistoryStudentsFiltered query error: ', e);
       return null;
     }
   }
@@ -148,7 +148,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.get(`${EPS.student.getStudents}?intecId=${intecId}`)
     } catch(e) {
-      console.log('getStudents query error: ', e);
+      log.error('getStudents query error: ', e);
       return null;
     }
   }
@@ -158,7 +158,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         student: student
       })
     } catch(e) {
-      console.log('addStudent query error: ', e);
+      log.error('addStudent query error: ', e);
       return null;
     }
   }
@@ -169,7 +169,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         userName: userName
       })
     } catch(e) {
-      console.log('getStudentInCurrentTrimester query error: ', e);
+      log.error('getStudentInCurrentTrimester query error: ', e);
       return null;
     }
   }
@@ -179,7 +179,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.get(`${EPS.teacher.getTeachers}/intecId=${intecId}`)
     } catch(e) {
-      console.log('getTeachers query error: ', e);
+      log.error('getTeachers query error: ', e);
       return null;
     }
   }
@@ -189,7 +189,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         teacher: teacher
       })
     } catch(e) {
-      console.log('addTeacher query error: ', e);
+      log.error('addTeacher query error: ', e);
       return null;
     }
   }
@@ -200,7 +200,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         userName: userName
       })
     } catch(e) {
-      console.log('getTeacherInCurrentTrimester query error: ', e);
+      log.error('getTeacherInCurrentTrimester query error: ', e);
       return null;
     }
   }
@@ -213,7 +213,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         value: value
       })
     } catch(e) {
-      console.log('updateSurveyStatus query error: ', e);
+      log.error('updateSurveyStatus query error: ', e);
       return null;
     }
   }
@@ -221,7 +221,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.get(`${EPS.common.getUser}?intecId=${intecId}&domain=${domain}`)
     } catch(e) {
-      console.log('getUser query error: ', e);
+      log.error('getUser query error: ', e);
       return null;
     }
   }
@@ -232,7 +232,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         email: email,
       })
     } catch(e) {
-      console.log('getAppUser query error: ', e);
+      log.error('getAppUser query error: ', e);
       return null;
     }
   }
@@ -242,7 +242,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.get(EPS.blacklist.getBlackListUsers)
     } catch(e) {
-      console.log('getBlackListUsers query error: ', e);
+      log.error('getBlackListUsers query error: ', e);
       return null;
     }
   }
@@ -252,7 +252,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         user: user
       })
     } catch(e) {
-      console.log('addBlackListUser query error: ', e);
+      log.error('addBlackListUser query error: ', e);
       return null;
     }
   }
@@ -262,7 +262,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         user: user
       })
     } catch(e) {
-      console.log('deleteBlackListUser query error: ', e);
+      log.error('deleteBlackListUser query error: ', e);
       return null;
     }
   }
@@ -272,7 +272,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         user: user
       })
     } catch(e) {
-      console.log('updateBlackListUser query error: ', e);
+      log.error('updateBlackListUser query error: ', e);
       return null;
     }
   }
@@ -282,7 +282,7 @@ const getQueries = axiosInstance.init().then((axios) => {
     try {
       return axios.get(EPS.subject.getSubjects)
     } catch(e) {
-      console.log('getSubjects query error: ', e);
+      log.error('getSubjects query error: ', e);
       return null;
     }
   }
@@ -292,7 +292,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         subjects: subjects
       })
     } catch(e) {
-      console.log('addSubjects query error: ', e);
+      log.error('addSubjects query error: ', e);
       return null;
     }
   }
@@ -302,7 +302,7 @@ const getQueries = axiosInstance.init().then((axios) => {
         subjects: subjects
       })
     } catch(e) {
-      console.log('removeAllSubjects query error: ', e);
+      log.error('removeAllSubjects query error: ', e);
       return null;
     }
   }
