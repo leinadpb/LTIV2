@@ -1,5 +1,6 @@
 const MSI = require('electron-wix-msi');
 const path = require('path');
+const log = require('electron-log');
 
 let folderName = process.platform.toLocaleLowerCase() === 'darwin' ? 'labapp-darwin-x64' : 'labapp-win32-x64';
 // Only windows is supported >>>>
@@ -28,10 +29,10 @@ const msiCreator = new MSI.MSICreator({
       // Step 3: Compile the template to a .msi file
       await msiCreator.compile();
     } catch(err) {
-      console.log('Error compiling .wxs file >>>', err);
+      log.error('Error compiling .wxs file >>>', err);
     }
   } catch(err) {
-    console.log('Error creating .wxs file >>>>', err);
+    log.error('Error creating .wxs file >>>>', err);
   }
   
 })();

@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const queriesFns = require('./db/queries');
 const os = require('os');
 const path = require('path');
+const log = require('electron-log');
 
 require('electron-reload')(__dirname);
 const unhandled = require('electron-unhandled');
@@ -109,9 +110,9 @@ const showSurvey = (url, user) => {
     })
   })
   ipcMain.on('filled-survey', async(e, args) => {
-    console.log('User has filled survey: ', args, user);
+    log.info('User has filled survey: ', args, user);
     await queries.updateSurveyStatus(user, true);
-    console.log('User survey state was updated to: TRUE');
+    log.info('User survey state was updated to: TRUE');
     e.reply('survey-state-to-true', {});
   })
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.surveyPage}.html`));
@@ -122,7 +123,7 @@ const showSurvey = (url, user) => {
 
 const showSurveyOrClose = async (userName, userDomain, APP_PREFERENCES) => {
   const user = (await queries.getUser(userName, userDomain)).data.data;
-  console.log('User obtained on show survey before: ', user);
+  log.info('User obtained on show survey before: ', user);
   if (userDomain.toLowerCase() === "intec") {
     if (APP_PREFERENCES.activateStudentSurvey) {
       if (!user.hasFilledSurvey) {
@@ -167,7 +168,7 @@ const showReminder = (user, APP_PREFERENCES) => {
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.reminderPage}.html`));
   // window.webContents.openDevTools();
   window.on('close', () => {
-    console.log('You have closed reminder window');
+    log.info('You have closed reminder window');
     showSurveyOrClose(user.intecId, user.domain, APP_PREFERENCES);
   })
 }
@@ -199,7 +200,7 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
   });
   window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.rulesPage}.html`));
   window.on('close', () => {
-    console.log('You have closed rules window');
+    log.info('You have closed rules window');
     showSurveyOrClose(userName, userDomain, APP_PREFERENCES);
   });
 }
@@ -220,7 +221,7 @@ app.on('ready', async () => {
 
       if (isUserBlackListed) {
         // Stop execution of the program.
-        console.log('You are blacklisted, so the program will close.');
+        log.info('You are blacklisted, so the program will close.');
         app.quit();
         return;
       }
@@ -246,17 +247,17 @@ app.on('ready', async () => {
         activateTeacherSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey) ? (configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey).value.toLowerCase() === "true") ? true : false : true,
       }
 
-      console.log(APP_PREFERENCES);
+      log.info(APP_PREFERENCES);
 
 
       const USERS = (userDomain.toLowerCase() === "intec") ? (await _queries.getStudentInCurrentTrimester(currentTrimester[0], userName)).data.data : (await _queries.getTeacherInCurrentTrimester(currentTrimester[0], userName)).data.data;
       const USER = USERS[0];
 
-      console.log("CURRENT STUDENT", USER);
+      log.info("CURRENT STUDENT", USER);
       if (!USER) {
         showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
       } else {
-        console.log(USER);
+        log.info(USER);
         if (APP_PREFERENCES.showRulesReminder.toLowerCase() === "true") {
           showReminder(USER, APP_PREFERENCES);
         } else {
@@ -264,7 +265,7 @@ app.on('ready', async () => {
         }
       }
     } catch (ex) {
-      console.log('Something bad ocurred. This application will shutdown. Please, contact your Main developer to get around this issue.');
+      log.error('Something bad ocurred. This application will shutdown. Please, contact your Main developer to get around this issue.');
     }
 
     // TODO: Move this to a child_process ----->
@@ -289,8 +290,8 @@ app.on('activate', () => {
 });
 
 ipcMain.on('add-student-to-history', async (event, args) => {
-  console.log('Acceptting rules...', args);
-  console.log('trimester id: ', args.trimester._id.id);
+  log.info('Acceptting rules...', args);
+  log.info('trimester id: ', args.trimester._id.id);
   if (args.userDomain.toLowerCase() === "intec") {
     await queries.addStudent({
       name: args.userName,

@@ -58,6 +58,7 @@
     "axios": "^0.19.0",
     "current-processes": "^0.2.1",
     "dotenv": "^8.0.0",
+    "electron-log": "^3.0.7",
     "electron-reload": "^1.4.0",
     "electron-squirrel-startup": "^1.0.0",
     "electron-unhandled": "^2.2.0",

@@ -6,7 +6,7 @@ const getAuthToken = async () => {
   try {
     envs = require('../../environments.js');
   } catch(err) {
-    console.log('Please, create environments.js file at the root project with all environments variables.')
+    log.warn('Please, create environments.js file at the root project with all environments variables.')
   }
   try {
     let res = await axios.post('/auth/signin', {
@@ -15,8 +15,7 @@ const getAuthToken = async () => {
     });
     return res.headers['authorization'];
   } catch(ex) {
-    console.log('Error when authenticating: ');
-    console.log(ex);
+    log.error('Error when authenticating: ', ex);
     return '';
   }
 }
