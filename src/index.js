@@ -212,49 +212,59 @@ app.on('ready', async () => {
     let userDomain = process.env.USERDOMAIN || "intec";
     let userName = process.env.USERNAME || os.userInfo().username;
 
-    // Get Blacklist users
-    const blackListedUsers = (await _queries.getBlackListUsers()).data.data;
-    const isUserBlackListed = blackListedUsers.find(u => u.intecId.toLowerCase() === userName.toLowerCase());
+    try {
 
-    if (isUserBlackListed) {
-      // Stop execution of the program.
-      console.log('You are blacklisted, so the program will close.');
-      app.quit();
-      return;
-    }
+      // Get Blacklist users
+      const blackListedUsers = (await _queries.getBlackListUsers()).data.data;
+      const isUserBlackListed = blackListedUsers.find(u => u.intecId.toLowerCase() === userName.toLowerCase());
 
+      if (isUserBlackListed) {
+        // Stop execution of the program.
+        console.log('You are blacklisted, so the program will close.');
+        app.quit();
+        return;
+      }
+
+<<<<<<< HEAD
  
     const configs = (await _queries.getConfigs()).data.data;
+=======
+      // get configs
+      const configs = (await _queries.getConfigs()).data.data;
+>>>>>>> 951413732eb9227147a3d650af2d99a31c1a6781
 
-    const currentTrimester = (await _queries.getCurrentTrimester()).data.data;
+      const currentTrimester = (await _queries.getCurrentTrimester()).data.data;
 
-    const APP_PREFERENCES = {
-      fullscreen: !!configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen) ? configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value : '',
-      showSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey) ? configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value : '',
-      studentUrl: !!configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value : '',
-      teacherUrl:  !!configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value : '',
-      reminderText: !!configs.find(cfg => cfg.key === settings.CONFIGS.reminderText) ? configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value : '',
-      showRulesReminder: !!configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder) ? configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder).value : '',
-      activateStudentSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.activateStudentSurvey) ? (configs.find(cfg => cfg.key === settings.CONFIGS.activateStudentSurvey).value.toLowerCase() === "true") ? true : false : true,
-      activateTeacherSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey) ? (configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey).value.toLowerCase() === "true") ? true : false : true,
-    }
-
-    console.log(APP_PREFERENCES);
-
-
-    const USERS = (userDomain.toLowerCase() === "intec") ? (await _queries.getStudentInCurrentTrimester(currentTrimester[0], userName)).data.data : (await _queries.getTeacherInCurrentTrimester(currentTrimester[0], userName)).data.data;
-    const USER = USERS[0];
-
-    console.log("CURRENT STUDENT", USER);
-    if (!USER) {
-      showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
-    } else {
-      console.log(USER);
-      if (APP_PREFERENCES.showRulesReminder.toLowerCase() === "true") {
-        showReminder(USER, APP_PREFERENCES);
-      } else {
-        app.quit();
+      const APP_PREFERENCES = {
+        fullscreen: !!configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen) ? configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value : '',
+        showSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey) ? configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value : '',
+        studentUrl: !!configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value : '',
+        teacherUrl:  !!configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value : '',
+        reminderText: !!configs.find(cfg => cfg.key === settings.CONFIGS.reminderText) ? configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value : '',
+        showRulesReminder: !!configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder) ? configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder).value : '',
+        activateStudentSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.activateStudentSurvey) ? (configs.find(cfg => cfg.key === settings.CONFIGS.activateStudentSurvey).value.toLowerCase() === "true") ? true : false : true,
+        activateTeacherSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey) ? (configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey).value.toLowerCase() === "true") ? true : false : true,
       }
+
+      console.log(APP_PREFERENCES);
+
+
+      const USERS = (userDomain.toLowerCase() === "intec") ? (await _queries.getStudentInCurrentTrimester(currentTrimester[0], userName)).data.data : (await _queries.getTeacherInCurrentTrimester(currentTrimester[0], userName)).data.data;
+      const USER = USERS[0];
+
+      console.log("CURRENT STUDENT", USER);
+      if (!USER) {
+        showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
+      } else {
+        console.log(USER);
+        if (APP_PREFERENCES.showRulesReminder.toLowerCase() === "true") {
+          showReminder(USER, APP_PREFERENCES);
+        } else {
+          app.quit();
+        }
+      }
+    } catch (ex) {
+      console.log('Something bad ocurred. This application will shutdown. Please, contact your Main developer to get around this issue.');
     }
 
     // TODO: Move this to a child_process ----->

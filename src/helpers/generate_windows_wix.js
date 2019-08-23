@@ -1,4 +1,5 @@
 const MSI = require('electron-wix-msi');
+const path = require('path');
 
 let folderName = process.platform.toLocaleLowerCase() === 'darwin' ? 'labapp-darwin-x64' : 'labapp-win32-x64';
 // Only windows is supported >>>>
@@ -6,13 +7,13 @@ folderName = 'labapp-win32-x64';
 
 // Step 1: Instantiate the MSICreator
 const msiCreator = new MSI.MSICreator({
-  appDirectory: `./out/${folderName}`,
+  appDirectory: path.resolve(__dirname, '..', '..', 'out', folderName),
+	outputDirectory: path.resolve(__dirname, '..', '..', 'installers', 'windows'),
   description: 'App for rules and surveys data for LTI students and teachers.',
   exe: 'labapp',
   name: 'Lab App',
   manufacturer: 'INTEC LTI',
   version: '2.0.0',
-  outputDirectory: './installers/windows',
   ui: {
     chooseDirectory: true
   }

@@ -25,6 +25,9 @@ const init = async () => {
   return new Promise(async (resolve, reject) => {
     // Configure axios defaults
     axios.defaults.baseURL = settings.API.baseURL;
+    // axios.defaults.adapter = function() {
+    //   return require('axios/adapters/http'); // always use Node.js adapter
+    // };
     axios.defaults.headers.common['Authorization'] = `Bearer ${await getAuthToken()}`;
     resolve(axios);
   })
