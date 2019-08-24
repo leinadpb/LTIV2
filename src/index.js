@@ -12,71 +12,71 @@ require('electron-reload')(__dirname);
 const unhandled = require('electron-unhandled');
 unhandled();
 
-if (handleSquirrelEvent()) {
-  return;
-}
+// if (handleSquirrelEvent()) {
+//   return;
+// }
 
-function handleSquirrelEvent() {
-  if (process.argv.length === 1) {
-    return false;
-  }
+// function handleSquirrelEvent() {
+//   if (process.argv.length === 1) {
+//     return false;
+//   }
 
-  const ChildProcess = require('child_process');
-  const path = require('path');
+//   const ChildProcess = require('child_process');
+//   const path = require('path');
 
-  const appFolder = path.resolve(process.execPath, '..');
-  const rootAtomFolder = path.resolve(appFolder, '..');
-  const updateDotExe = path.resolve(path.join(rootAtomFolder, 'Update.exe'));
-  const exeName = path.basename(process.execPath);
+//   const appFolder = path.resolve(process.execPath, '..');
+//   const rootAtomFolder = path.resolve(appFolder, '..');
+//   const updateDotExe = path.resolve(path.join(rootAtomFolder, 'Update.exe'));
+//   const exeName = path.basename(process.execPath);
 
-  const spawn = function(command, args) {
-    let spawnedProcess, error;
+//   const spawn = function(command, args) {
+//     let spawnedProcess, error;
 
-    try {
-      spawnedProcess = ChildProcess.spawn(command, args, {detached: true});
-    } catch (error) {}
+//     try {
+//       spawnedProcess = ChildProcess.spawn(command, args, {detached: true});
+//     } catch (error) {}
 
-    return spawnedProcess;
-  };
+//     return spawnedProcess;
+//   };
 
-  const spawnUpdate = function(args) {
-    return spawn(updateDotExe, args);
-  };
+//   const spawnUpdate = function(args) {
+//     return spawn(updateDotExe, args);
+//   };
 
-  const squirrelEvent = process.argv[1];
-  switch (squirrelEvent) {
-    case '--squirrel-install':
-    case '--squirrel-updated':
-      // Optionally do things such as:
-      // - Add your .exe to the PATH
-      // - Write to the registry for things like file associations and
-      //   explorer context menus
+//   const squirrelEvent = process.argv[1];
+//   switch (squirrelEvent) {
+//     case '--squirrel-install':
+//     case '--squirrel-updated':
+//       // Optionally do things such as:
+//       // - Add your .exe to the PATH
+//       // - Write to the registry for things like file associations and
+//       //   explorer context menus
 
-      // Install desktop and start menu shortcuts
-      spawnUpdate(['--createShortcut', exeName]);
+//       // Install desktop and start menu shortcuts
+//       spawnUpdate(['--createShortcut', exeName]);
 
-      setTimeout(app.quit, 1000);
-      return true;
+//       setTimeout(app.quit, 1000);
+//       return true;
 
-    case '--squirrel-uninstall':
-      // Undo anything you did in the --squirrel-install and
-      // --squirrel-updated handlers
+//     case '--squirrel-uninstall':
+//       // Undo anything you did in the --squirrel-install and
+//       // --squirrel-updated handlers
 
-      // Remove desktop and start menu shortcuts
-      spawnUpdate(['--removeShortcut', exeName]);
+//       // Remove desktop and start menu shortcuts
+//       spawnUpdate(['--removeShortcut', exeName]);
 
-      setTimeout(app.quit, 1000);
-      return true;
+//       setTimeout(app.quit, 1000);
+//       return true;
 
-    case '--squirrel-obsolete':
-      // This is called on the outgoing version of your app before
-      // we update to the new version - it's the opposite of
-      // --squirrel-updated
+//     case '--squirrel-obsolete':
+//       // This is called on the outgoing version of your app before
+//       // we update to the new version - it's the opposite of
+//       // --squirrel-updated
 
-      app.quit();
-      return true;
-  }
-};
+//       app.quit();
+//       return true;
+//   }
+// };
 
 require('dotenv').config();
 
@@ -321,4 +321,3 @@ ipcMain.on('add-student-to-history', async (event, args) => {
   // Tell the Rules view that rules has been accepted without validation. This is the best for User Experience.
   event.reply('rules-has-been-accepted', {});
 });
- 
