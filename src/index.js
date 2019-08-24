@@ -1,9 +1,9 @@
  //handle setupevents as quickly as possible
- const setupEvents = require('./helpers/setupEvents.js')
- if (setupEvents.handleSquirrelEvent()) {
-    // squirrel event handled and app will exit in 1000ms, so don't do anything else
-    return;
- }
+//  const setupEvents = require('./helpers/setupEvents.js')
+//  if (setupEvents.handleSquirrelEvent()) {
+//     // squirrel event handled and app will exit in 1000ms, so don't do anything else
+//     return;
+//  }
 
 const { app, BrowserWindow, ipcMain, electron } = require('electron');
 const killBrowsers = require('./helpers/kill_browsers');

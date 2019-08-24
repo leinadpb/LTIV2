@@ -16,7 +16,7 @@
     "lint": "echo \"No linting configured\"",
     "build-win": "node ./src/helpers/generate_windows_wix.js",
     "build-win-old": "node ./src/helpers/generate_windows.js",
-    "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=src/images/labti-logo.ico --prune=true --out=installers/windows --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"LAB App - INTEC\"",
+    "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=x64 --icon=src/images/labti-logo.ico --prune=true --out=installers/windows --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"LAB App - INTEC\"",
     "create-installer-win": "node src/helpers/generate_windows.js",
     "package-mac": "electron-packager . --overwrite --asar=true --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=installers/mac",
     "create-installer-mac": "electron-installer-dmg ./installers/mac/Electron\\ tutorial\\ app-darwin-x64/Electron\\ tutorial\\ labapp.app electron-tutorial-app --out=installers/mac --overwrite --icon=src/images/labti-logo.icns"

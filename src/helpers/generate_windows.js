@@ -5,7 +5,7 @@ const log = require('electron-log');
 let folderName = process.platform.toLocaleLowerCase() === 'darwin' ? 'labapp-darwin-x64' : 'labapp-win32-x64';
 
 // Only windows is supported >>>>
-folderName = 'labapp-win32-ia32';
+folderName = 'labapp-win32-x64';
 
 (async () => {
     try {
