@@ -5,9 +5,8 @@
 //     return;
 //  }
 
-const { app, BrowserWindow, ipcMain, electron } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const killBrowsers = require('./helpers/kill_browsers');
-const test = require('./helpers/test_helper');
 const settings = require('./settings');
 const mongoose = require('mongoose');
 const queriesFns = require('./db/queries');
@@ -22,9 +21,6 @@ unhandled();
 require('dotenv').config();
 
 let window;
-let jobs;
-let width = 800;
-let height = 600;
 let canQuitApp = false;
 
 let queries = undefined;
