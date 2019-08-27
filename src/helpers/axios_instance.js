@@ -1,6 +1,7 @@
 const axios = require('axios');
 const settings = require('../settings');
 const log = require('electron-log');
+
 const getAuthToken = async () => {
   let envs = process.env;
   try {

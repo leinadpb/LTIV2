@@ -163,6 +163,9 @@ app.on('ready', async () => {
         return;
       }
 
+ 
+   
+
       // get configs
       const configs = (await _queries.getConfigs()).data.data;
 
