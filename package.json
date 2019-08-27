@@ -14,7 +14,12 @@
     "make": "electron-forge make --platform=win32 --arch=x64",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
-    "build-win": "node ./src/helpers/generate_windows_wix.js"
+    "build-win": "node ./src/helpers/generate_windows_wix.js",
+    "build-win-old": "node ./src/helpers/generate_windows.js",
+    "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=x64 --icon=src/images/labti-logo.ico --prune=true --out=installers/windows --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"LAB App - INTEC\"",
+    "create-installer-win": "node src/helpers/generate_windows.js",
+    "package-mac": "electron-packager . --overwrite --asar=true --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=installers/mac",
+    "create-installer-mac": "electron-installer-dmg ./installers/mac/Electron\\ tutorial\\ app-darwin-x64/Electron\\ tutorial\\ labapp.app electron-tutorial-app --out=installers/mac --overwrite --icon=src/images/labti-logo.icns"
   },
   "keywords": [],
   "author": "INTEC",
@@ -58,7 +63,9 @@
     "axios": "^0.19.0",
     "current-processes": "^0.2.1",
     "dotenv": "^8.0.0",
+    "electron-installer-dmg": "^3.0.0",
     "electron-log": "^3.0.7",
+    "electron-packager": "^14.0.4",
     "electron-reload": "^1.4.0",
     "electron-squirrel-startup": "^1.0.0",
     "electron-unhandled": "^2.2.0",
