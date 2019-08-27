@@ -226,13 +226,11 @@ app.on('ready', async () => {
         return;
       }
 
-<<<<<<< HEAD
  
-    const configs = (await _queries.getConfigs()).data.data;
-=======
+   
+
       // get configs
       const configs = (await _queries.getConfigs()).data.data;
->>>>>>> 951413732eb9227147a3d650af2d99a31c1a6781
 
       const currentTrimester = (await _queries.getCurrentTrimester()).data.data;
 
