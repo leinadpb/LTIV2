@@ -4,3 +4,5 @@ out2
 .env
 environments.js
 installers/
+yarn-error.log
+yarn.lock
