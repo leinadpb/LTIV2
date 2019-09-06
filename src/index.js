@@ -227,6 +227,10 @@ app.on('activate', () => {
 ipcMain.on('add-student-to-history', async (event, args) => {
   log.info('Acceptting rules...', args);
   log.info('trimester id: ', args.trimester._id.id);
+  // Tell the Rules view that rules has been accepted without validation. This is the best for User Experience.
+  console.log("Angelo");
+  event.reply('rules-accepted', {});
+  console.log("Angelo 2");
   if (args.userDomain.toLowerCase() === "intec") {
     await queries.addStudent({
       name: args.userName,
@@ -258,6 +262,4 @@ ipcMain.on('add-student-to-history', async (event, args) => {
       hasFilledSurvey: false
     });
   }
-  // Tell the Rules view that rules has been accepted without validation. This is the best for User Experience.
-  event.reply('rules-has-been-accepted', {});
 });

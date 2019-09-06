@@ -58,7 +58,7 @@
           setSubjects(windowData.subjects);
         }
       });
-      ipcRenderer.on('rules-has-been-accepted', (event, args) => {
+      ipcRenderer.on('rules-accepted', (event, args) => {
         console.log('Rules acceped!');
         window.close();
       })
