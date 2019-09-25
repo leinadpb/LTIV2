@@ -123,7 +123,7 @@
         </div>
       </div>
       <div class="survey">
-        <iframe id="survey-iframe" onChange="iframeChange(e)" onLoad="console.log(this.src)" src="https://docs.google.com/forms/d/e/1FAIpQLScbmdJrdk0tXVNxIc8kjX73yP6Aph49WVN3BqBNcmHoPsAPiw/viewform?usp=sf_link">
+        <iframe id="survey-iframe" onChange="iframeChange(e)" onLoad="console.log(this.src)" src="" style="display: none;">
         </iframe>
         <div id="happy-end" class="happy-end">
           <div class="title">
@@ -165,7 +165,9 @@
       const setWindowData = () => {
         document.getElementById("user-id").innerHTML = windowData.user.fullName;
         document.getElementById("trimester-name").innerHTML = windowData.user.trimesterName;
-        document.getElementById("survey-iframe").src = windowData.url;
+        let iFrame = document.getElementById("survey-iframe");
+        iFrame.src = windowData.url; // Set student or teacher survey url, this is determined in index.js
+        iFrame.style.display = "block";
       }
 
       function iframeChange(e) {
