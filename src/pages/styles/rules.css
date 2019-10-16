@@ -5,26 +5,46 @@ body, div, span {
 .page-wrapper {
   width: 100vw;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-rows: 1fr 5fr 1fr;
+  grid-template-columns: auto;
+  overflow: hidden;
+  grid-template-areas: "
+    header
+    rules
+    footer
+  ";
 }
 .header-wrapper {
+  grid-area: "header";
   width: 100%;
+  height: 100%;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.rules-wrapper {
+  grid-area: "rules";
+  width: 90%;
+  height: 100%;
   padding: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-.rules-wrapper {
-  width: 80%;
-  padding: 24px;
-  display: flex;
+  overflow: auto;
   margin: 0 auto;
+}
+
+.bottom-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 16px;
+  flex-direction: row;
 }
 
 .title-list {
@@ -38,7 +58,7 @@ body, div, span {
 .rules-listing {
   font-size: 18px;
   font-family: Arial, Helvetica, sans-serif;
-  width: 100%;
+  width: 90%;
 }
 
 .rules-listing li {
@@ -60,9 +80,7 @@ body, div, span {
     justify-content: center;
     align-items: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-	/*-*/
-
-}
+  }
 .select {
   border-bottom: 1px solid #eee;
   padding: 16px;
@@ -104,13 +122,7 @@ body, div, span {
   margin-right: 16px !important;
   margin-left: 8px !important;
 }
-.bottom-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-}
+
 
 .custom-input {
   font-size: 1.2rem;

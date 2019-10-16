@@ -8,37 +8,35 @@
   </head>
   <body>
     <div class="page-wrapper">
-      <div class="container animated bounceInUp" style="width: 100%">
-        <div class="header-wrapper">
-          <h1 class="title-list">Normas de laboratorio</h1>
+      <div class="header-wrapper">
+        <h1 class="title-list">Normas de laboratorio</h1>
+      </div>
+      <div class="rules-wrapper">
+        <ol class="rules-listing" id="rules-container"></ol>
+      </div>
+      <div class="bottom-wrapper">
+        <div class="custom-select"> 
+          <label for="subject" class="Form-subject">Materia:</label>
+          <select name="subject" id="subject-list" class="form-control custom-input">
+            <option value="-1" selected>Seleccione...</option>
+          </select>
+    
+          <label for="teacher" class="Form-teacher">Profesor:</label>
+          <select name="teacher" id="teacher-list" class="form-control custom-input " disabled=true></select>
+    
+          <label for="seccion" class="Form-seccion">Sección:</label>
+          <select name="seccion" id="section-list" class="form-control custom-input">
+            <option value="0"></option>
+            <option value="1">1</option> 
+            <option value="2">2</option> 
+            <option value="3">3</option>
+            <option value="4">4</option> 
+            <option value="5">5</option>
+          </select>
         </div>
-        <div class="rules-wrapper">
-          <ol class="rules-listing" id="rules-container"></ol>
-        </div>
-        <div class="bottom-wrapper">
-          <div class="custom-select"> 
-            <label for="subject" class="Form-subject">Materia:</label>
-            <select name="subject" id="subject-list" class="form-control custom-input">
-              <option value="-1" selected>Seleccione...</option>
-            </select>
-      
-            <label for="teacher" class="Form-teacher">Profesor:</label>
-            <select name="teacher" id="teacher-list" class="form-control custom-input " disabled=true></select>
-      
-            <label for="seccion" class="Form-seccion">Sección:</label>
-            <select name="seccion" id="section-list" class="form-control custom-input">
-              <option value="0"></option>
-              <option value="1">1</option> 
-              <option value="2">2</option> 
-              <option value="3">3</option>
-              <option value="4">4</option> 
-              <option value="5">5</option>
-            </select>
-          </div>
-          <div class="submit-btn-wrapper">
-              <button onclick="startAccepting(event)" class="submit-btn" id="accept-button">Aceptar</button>
-              <img width="100px" height="80px" id="loading-gif" src="../../public/images/loading-gif.gif" alt="INTEC | Loading gif image" style="display: none" />
-          </div>
+        <div class="submit-btn-wrapper">
+            <button onclick="startAccepting(event)" class="submit-btn" id="accept-button">Aceptar</button>
+            <img width="100px" height="80px" id="loading-gif" src="../../public/images/loading-gif.gif" alt="INTEC | Loading gif image" style="display: none" />
         </div>
       </div>
     </div>
