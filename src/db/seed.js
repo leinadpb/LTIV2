@@ -1,61 +1,61 @@
-const ConfigModel = require('../models/config');
-const RuleModel = require('../models/rule');
-const TrimesterModel = require('../models/trimesters');
-const BlackListModel = require('../models/blackList');
-const TeacherModel = require('../models/teacher');
-const SubjectModel = require('../models/subject');
-const queries = require('./queries');
-const settings = require('../settings');
+const ConfigModel = require("../models/config");
+const RuleModel = require("../models/rule");
+const TrimesterModel = require("../models/trimesters");
+const BlackListModel = require("../models/blackList");
+const TeacherModel = require("../models/teacher");
+const SubjectModel = require("../models/subject");
+const queries = require("./queries");
+const settings = require("../settings");
 
 const Subjects = [
   {
-    name: 'BIOLOGIA GENERAL',
-    code: 'CBB101',
-    type: 'T',
-    section: '01',
-    room: 'FD415',
-    teacherAssigned: 'KELVIN ANTONIO GUERRERO RAMIREZ'
+    name: "BIOLOGIA GENERAL",
+    code: "CBB101",
+    type: "T",
+    section: "01",
+    room: "FD415",
+    teacherAssigned: "KELVIN ANTONIO GUERRERO RAMIREZ"
   },
   {
-    name: 'PROGRAMACION I',
-    code: 'INS212',
-    type: 'T',
-    section: '01',
-    room: 'FD414',
-    teacherAssigned: 'JOEL FRANCIS JIMENEZ BAEZ'
+    name: "PROGRAMACION I",
+    code: "INS212",
+    type: "T",
+    section: "01",
+    room: "FD414",
+    teacherAssigned: "JOEL FRANCIS JIMENEZ BAEZ"
   },
   {
-    name: 'FUNDAMENTOS DE PROGRAMACION',
-    code: 'INS208',
-    type: 'T',
-    section: '01',
-    room: 'FD405',
-    teacherAssigned: 'FERNANDO ARTURO HIRUJO PICHARDO'
+    name: "FUNDAMENTOS DE PROGRAMACION",
+    code: "INS208",
+    type: "T",
+    section: "01",
+    room: "FD405",
+    teacherAssigned: "FERNANDO ARTURO HIRUJO PICHARDO"
   },
   {
-    name: 'HOJAS DE CALCULO PARA INGENIEROS',
-    code: 'INS209',
-    type: 'T',
-    section: '01',
-    room: 'FD402',
-    teacherAssigned: 'CRISTIAN MARIANO RODRIGUEZ REYES'
+    name: "HOJAS DE CALCULO PARA INGENIEROS",
+    code: "INS209",
+    type: "T",
+    section: "01",
+    room: "FD402",
+    teacherAssigned: "CRISTIAN MARIANO RODRIGUEZ REYES"
   },
   {
-    name: 'DIBUJO CIVIL',
-    code: 'CIV311',
-    type: 'T',
-    section: '03',
-    room: 'FD411',
-    teacherAssigned: 'OMAR RAMOS PEPEN'
+    name: "DIBUJO CIVIL",
+    code: "CIV311",
+    type: "T",
+    section: "03",
+    room: "FD411",
+    teacherAssigned: "OMAR RAMOS PEPEN"
   },
   {
-    name: 'DIBUJO MECANICO I',
-    code: 'INM201',
-    type: 'T',
-    section: '02',
-    room: 'FD412',
-    teacherAssigned: 'PEDRO PABLO BENITEZ LUNA'
-  },
+    name: "DIBUJO MECANICO I",
+    code: "INM201",
+    type: "T",
+    section: "02",
+    room: "FD412",
+    teacherAssigned: "PEDRO PABLO BENITEZ LUNA"
+  }
 ];
 
 const AppConfigs = [
@@ -69,59 +69,62 @@ const AppConfigs = [
   },
   {
     key: settings.CONFIGS.studentUrl,
-    value: 'https://www.digitalocean.com/community/tutorials/understanding-date-and-time-in-javascript'
+    value:
+      "https://www.digitalocean.com/community/tutorials/understanding-date-and-time-in-javascript"
   },
   {
     key: settings.CONFIGS.teacherUrl,
-    value: 'https://stackoverflow.com/questions/40332455/mongoose-query-by-date/40332542'
+    value:
+      "https://stackoverflow.com/questions/40332455/mongoose-query-by-date/40332542"
   },
   {
     key: settings.CONFIGS.reminderText,
-    value: 'From seed data, las violaciones a estas normas pueden sansionarte! :)',
+    value:
+      "From seed data, las violaciones a estas normas pueden sansionarte! :)"
   }
 ];
 
 const rules = [
   {
     number: 1,
-    text: 'Text for rule #1 here....'
+    text: "Text for rule #1 here...."
   },
   {
     number: 2,
-    text: 'Text for rule #2 here....'
+    text: "Text for rule #2 here...."
   },
   {
     number: 3,
-    text: 'Text for rule #3 here....'
+    text: "Text for rule #3 here...."
   },
   {
     number: 4,
-    text: 'Text for rule #4 here....'
+    text: "Text for rule #4 here...."
   },
   {
     number: 5,
-    text: 'Text for rule #5 here....'
+    text: "Text for rule #5 here...."
   },
   {
     number: 6,
-    text: 'Text for rule #6 here....'
+    text: "Text for rule #6 here...."
   },
   {
     number: 7,
-    text: 'Text for rule #7 here....'
+    text: "Text for rule #7 here...."
   },
   {
     number: 8,
-    text: 'Text for rule #8 here....'
+    text: "Text for rule #8 here...."
   },
   {
     number: 9,
-    text: 'Text for rule #9 here....'
+    text: "Text for rule #9 here...."
   },
   {
     number: 10,
-    text: 'Text for rule #10 here....'
-  },
+    text: "Text for rule #10 here...."
+  }
 ];
 
 // Please, note that month start from Zero in JS (0 - 11)
@@ -129,30 +132,37 @@ const trimesters = [
   {
     start: new Date(2019, 4, 1),
     ends: new Date(2019, 6, 12),
-    name: 'Mayo - Julio 2019',
+    name: "Mayo - Julio 2019",
     lastModified: undefined,
-    customId: 'M-J-2019'
+    customId: "M-J-2019"
   },
   {
     start: new Date(2019, 7, 1),
     ends: new Date(2019, 9, 24),
-    name: 'Agosto - Octubre 2019',
+    name: "Agosto - Octubre 2019",
     lastModified: undefined,
-    customId: 'A-O-2019'
+    customId: "A-O-2019"
   },
   {
     start: new Date(2019, 10, 1),
     ends: new Date(2020, 0, 18),
-    name: 'Noviembre - Enero 2020',
+    name: "Noviembre - Enero 2020",
     lastModified: undefined,
-    customId: 'N-E-2020'
+    customId: "N-E-2020"
   },
+  {
+    start: new Date(2019, 10, 1),
+    ends: new Date(2019, 12, 15),
+    name: "Octubre - Diciembre 2020 - TEST",
+    lastModified: undefined,
+    customId: "O-D-2020-TEST"
+  }
 ];
 
 const blackListedUsers = [
   {
-    intecId: '1066359',
-    domain: 'intec'
+    intecId: "1066359",
+    domain: "intec"
   }
 ];
 
@@ -160,7 +170,7 @@ queries.getConfigs().then(docs => {
   if (docs.length === 0) {
     ConfigModel.create(AppConfigs, (err, result) => {
       if (!!err) return;
-      console.log('Application configurations seeded. ', result);
+      console.log("Application configurations seeded. ", result);
     });
   }
 });
@@ -169,8 +179,8 @@ queries.getRules().then(docs => {
   if (docs.length === 0) {
     RuleModel.create(rules, (err, result) => {
       if (!!err) return;
-      console.log('Rules seeded. ', result);
-    })
+      console.log("Rules seeded. ", result);
+    });
   }
 });
 
@@ -180,9 +190,9 @@ queries.getTrimesters().then(docs => {
       if (!!err) {
         console.log(err);
         return;
-      };
-      console.log('Trimesters seeded. ', result);
-    })
+      }
+      console.log("Trimesters seeded. ", result);
+    });
   }
 });
 
@@ -192,9 +202,9 @@ queries.getBlackListUsers().then(docs => {
       if (!!err) {
         console.log(err);
         return;
-      };
-      console.log('Blacklist seeded. ', result);
-    })
+      }
+      console.log("Blacklist seeded. ", result);
+    });
   }
 });
 
@@ -204,8 +214,8 @@ queries.getSubjects().then(docs => {
       if (!!err) {
         console.log(err);
         return;
-      };
-      console.log('Subjects seeded. ', result);
-    })
+      }
+      console.log("Subjects seeded. ", result);
+    });
   }
 });

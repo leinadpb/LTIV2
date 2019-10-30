@@ -1,24 +1,24 @@
- //handle setupevents as quickly as possible
+//handle setupevents as quickly as possible
 //  const setupEvents = require('./helpers/setupEvents.js')
 //  if (setupEvents.handleSquirrelEvent()) {
 //     // squirrel event handled and app will exit in 1000ms, so don't do anything else
 //     return;
 //  }
 
-const { app, BrowserWindow, ipcMain } = require('electron');
-const killBrowsers = require('./helpers/kill_browsers');
-const settings = require('./settings');
-const mongoose = require('mongoose');
-const queriesFns = require('./db/queries');
-const os = require('os');
-const path = require('path');
-const log = require('electron-log');
+const { app, BrowserWindow, ipcMain } = require("electron");
+const killBrowsers = require("./helpers/kill_browsers");
+const settings = require("./settings");
+const mongoose = require("mongoose");
+const queriesFns = require("./db/queries");
+const os = require("os");
+const path = require("path");
+const log = require("electron-log");
 
-require('electron-reload')(__dirname);
-const unhandled = require('electron-unhandled');
+require("electron-reload")(__dirname);
+const unhandled = require("electron-unhandled");
 unhandled();
 
-require('dotenv').config();
+require("dotenv").config();
 
 let window;
 let canQuitApp = false;
@@ -27,7 +27,7 @@ let queries = undefined;
 
 const executeJobs = () => {
   killBrowsers.execute();
-}
+};
 
 const showSurvey = (url, user) => {
   window = new BrowserWindow({
@@ -40,27 +40,29 @@ const showSurvey = (url, user) => {
     frame: false,
     fullscreen: true
   });
-  ipcMain.on('survey-request-data', (e, args) => {
-    e.reply('survey-request-data-reply', {
+  ipcMain.on("survey-request-data", (e, args) => {
+    e.reply("survey-request-data-reply", {
       url: url,
       user: user
-    })
-  })
-  ipcMain.on('filled-survey', async(e, args) => {
-    log.info('User has filled survey: ', args, user);
+    });
+  });
+  ipcMain.on("filled-survey", async (e, args) => {
+    log.info("User has filled survey: ", args, user);
     await queries.updateSurveyStatus(user, true);
-    log.info('User survey state was updated to: TRUE');
-    e.reply('survey-state-to-true', {});
-  })
-  window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.surveyPage}.html`));
-  window.on('close', () => {
+    log.info("User survey state was updated to: TRUE");
+    e.reply("survey-state-to-true", {});
+  });
+  window.loadFile(
+    path.join(__dirname, "pages", `${settings.PAGES.surveyPage}.html`)
+  );
+  window.on("close", () => {
     app.quit();
-  })
-}
+  });
+};
 
 const showSurveyOrClose = async (userName, userDomain, APP_PREFERENCES) => {
   const user = (await queries.getUser(userName, userDomain)).data.data;
-  log.info('User obtained on show survey before: ', user);
+  log.info("User obtained on show survey before: ", user);
   if (userDomain.toLowerCase() === "intec") {
     if (APP_PREFERENCES.activateStudentSurvey) {
       if (!user.hasFilledSurvey) {
@@ -73,7 +75,7 @@ const showSurveyOrClose = async (userName, userDomain, APP_PREFERENCES) => {
       app.quit();
     }
   } else {
-    if(APP_PREFERENCES.activateTeacherSurvey) {
+    if (APP_PREFERENCES.activateTeacherSurvey) {
       if (!user.hasFilledSurvey) {
         showSurvey(APP_PREFERENCES.teacherUrl, user);
       } else {
@@ -84,7 +86,7 @@ const showSurveyOrClose = async (userName, userDomain, APP_PREFERENCES) => {
       app.quit();
     }
   }
-}
+};
 
 const showReminder = (user, APP_PREFERENCES) => {
   window = new BrowserWindow({
@@ -97,18 +99,20 @@ const showReminder = (user, APP_PREFERENCES) => {
     frame: false,
     resizable: false
   });
-  ipcMain.on('rulesReminder-window-data-request', (event, arg) => {
-    event.reply('rulesReminder-window-data', {
+  ipcMain.on("rulesReminder-window-data-request", (event, arg) => {
+    event.reply("rulesReminder-window-data", {
       customText: APP_PREFERENCES.reminderText
-    })
+    });
   });
-  window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.reminderPage}.html`));
+  window.loadFile(
+    path.join(__dirname, "pages", `${settings.PAGES.reminderPage}.html`)
+  );
   // window.webContents.openDevTools();
-  window.on('close', () => {
-    log.info('You have closed reminder window');
+  window.on("close", () => {
+    log.info("You have closed reminder window");
     showSurveyOrClose(user.intecId, user.domain, APP_PREFERENCES);
-  })
-}
+  });
+};
 
 const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
   const RULES = (await queries.getRules()).data.data;
@@ -124,8 +128,8 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
     resizable: false,
     fullscreen: true
   });
-  ipcMain.on('rules-window-data-request', (event, arg) => {
-    event.reply('rules-window-data',{
+  ipcMain.on("rules-window-data-request", (event, arg) => {
+    event.reply("rules-window-data", {
       rules: RULES,
       subjects: SUBJECTS,
       user: {
@@ -133,74 +137,133 @@ const showRules = async (userName, userDomain, trimester, APP_PREFERENCES) => {
         domain: userDomain
       },
       trimester: trimester
-    })
+    });
   });
-  window.loadFile(path.join(__dirname, 'pages', `${settings.PAGES.rulesPage}.html`));
-  window.on('close', () => {
-    log.info('You have closed rules window');
+  window.loadFile(
+    path.join(__dirname, "pages", `${settings.PAGES.rulesPage}.html`)
+  );
+  window.on("close", () => {
+    log.info("You have closed rules window");
     showSurveyOrClose(userName, userDomain, APP_PREFERENCES);
   });
-}
+};
 
-app.on('ready', async () => {
-
-  queriesFns.getQueries().then(async (_queries) => {
+app.on("ready", async () => {
+  queriesFns.getQueries().then(async _queries => {
     queries = _queries;
     // get user info
     let userDomain = process.env.USERDOMAIN || "intec";
     let userName = process.env.USERNAME || os.userInfo().username;
 
     try {
-
       // Get Blacklist users
       const blackListedUsers = (await _queries.getBlackListUsers()).data.data;
-      const isUserBlackListed = blackListedUsers.find(u => u.intecId.toLowerCase() === userName.toLowerCase());
+      const isUserBlackListed = blackListedUsers.find(
+        u => u.intecId.toLowerCase() === userName.toLowerCase()
+      );
 
       if (isUserBlackListed) {
         // Stop execution of the program.
-        log.info('You are blacklisted, so the program will close.');
+        log.info("You are blacklisted, so the program will close.");
         app.quit();
         return;
       }
-
- 
-   
 
       // get configs
       const configs = (await _queries.getConfigs()).data.data;
 
       const currentTrimester = (await _queries.getCurrentTrimester()).data.data;
 
+      log.info(currentTrimester);
+
       const APP_PREFERENCES = {
-        fullscreen: !!configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen) ? configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value : '',
-        showSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey) ? configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value : '',
-        studentUrl: !!configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value : '',
-        teacherUrl:  !!configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl) ? configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value : '',
-        reminderText: !!configs.find(cfg => cfg.key === settings.CONFIGS.reminderText) ? configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value : '',
-        showRulesReminder: !!configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder) ? configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder).value : '',
-        activateStudentSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.activateStudentSurvey) ? (configs.find(cfg => cfg.key === settings.CONFIGS.activateStudentSurvey).value.toLowerCase() === "true") ? true : false : true,
-        activateTeacherSurvey: !!configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey) ? (configs.find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey).value.toLowerCase() === "true") ? true : false : true,
-      }
+        fullscreen: !!configs.find(
+          cfg => cfg.key === settings.CONFIGS.isFullscreen
+        )
+          ? configs.find(cfg => cfg.key === settings.CONFIGS.isFullscreen).value
+          : "",
+        showSurvey: !!configs.find(
+          cfg => cfg.key === settings.CONFIGS.showSurvey
+        )
+          ? configs.find(cfg => cfg.key === settings.CONFIGS.showSurvey).value
+          : "",
+        studentUrl: !!configs.find(
+          cfg => cfg.key === settings.CONFIGS.studentUrl
+        )
+          ? configs.find(cfg => cfg.key === settings.CONFIGS.studentUrl).value
+          : "",
+        teacherUrl: !!configs.find(
+          cfg => cfg.key === settings.CONFIGS.teacherUrl
+        )
+          ? configs.find(cfg => cfg.key === settings.CONFIGS.teacherUrl).value
+          : "",
+        reminderText: !!configs.find(
+          cfg => cfg.key === settings.CONFIGS.reminderText
+        )
+          ? configs.find(cfg => cfg.key === settings.CONFIGS.reminderText).value
+          : "",
+        showRulesReminder: !!configs.find(
+          cfg => cfg.key === settings.CONFIGS.showRulesReminder
+        )
+          ? configs.find(cfg => cfg.key === settings.CONFIGS.showRulesReminder)
+              .value
+          : "",
+        activateStudentSurvey: !!configs.find(
+          cfg => cfg.key === settings.CONFIGS.activateStudentSurvey
+        )
+          ? configs
+              .find(cfg => cfg.key === settings.CONFIGS.activateStudentSurvey)
+              .value.toLowerCase() === "true"
+            ? true
+            : false
+          : true,
+        activateTeacherSurvey: !!configs.find(
+          cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey
+        )
+          ? configs
+              .find(cfg => cfg.key === settings.CONFIGS.activateTeacherSurvey)
+              .value.toLowerCase() === "true"
+            ? true
+            : false
+          : true
+      };
 
       log.info(APP_PREFERENCES);
 
+      try {
+        const USERS =
+          userDomain.toLowerCase() === "intec"
+            ? (await _queries.getStudentInCurrentTrimester(
+                currentTrimester[0],
+                userName
+              )).data.data
+            : (await _queries.getTeacherInCurrentTrimester(
+                currentTrimester[0],
+                userName
+              )).data.data;
+        const USER = USERS[0];
 
-      const USERS = (userDomain.toLowerCase() === "intec") ? (await _queries.getStudentInCurrentTrimester(currentTrimester[0], userName)).data.data : (await _queries.getTeacherInCurrentTrimester(currentTrimester[0], userName)).data.data;
-      const USER = USERS[0];
-
-      log.info("CURRENT STUDENT", USER);
-      if (!USER) {
-        showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
-      } else {
-        log.info(USER);
-        if (APP_PREFERENCES.showRulesReminder.toLowerCase() === "true") {
-          showReminder(USER, APP_PREFERENCES);
+        log.info("CURRENT STUDENT", USER);
+        if (!USER) {
+          showRules(userName, userDomain, currentTrimester[0], APP_PREFERENCES);
         } else {
-          app.quit();
+          log.info(USER);
+          if (APP_PREFERENCES.showRulesReminder.toLowerCase() === "true") {
+            showReminder(USER, APP_PREFERENCES);
+          } else {
+            app.quit();
+          }
         }
+        log.info("APP HEALTH:  OKEY");
+      } catch (e) {
+        og.error(
+          "Something bad ocurred. Error when fetching current user or teacher."
+        );
       }
     } catch (ex) {
-      log.error('Something bad ocurred. This application will shutdown. Please, contact your Main developer to get around this issue.');
+      log.error(
+        "Something bad ocurred. This application will shutdown. Please, contact your Main developer to get around this issue."
+      );
     }
 
     // TODO: Move this to a child_process ----->
@@ -209,27 +272,27 @@ app.on('ready', async () => {
     // jobs = setInterval(() => {
     //   executeJobs();
     // }, 3000);
-  })  
+  });
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin' && canQuitApp) {
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin" && canQuitApp) {
     app.quit();
   }
 });
 
-app.on('activate', () => {
+app.on("activate", () => {
   if (window === null) {
     createWindow(settings.PAGES.startPage, true);
   }
 });
 
-ipcMain.on('add-student-to-history', async (event, args) => {
-  log.info('Acceptting rules...', args);
-  log.info('trimester id: ', args.trimester._id.id);
+ipcMain.on("add-student-to-history", async (event, args) => {
+  log.info("Acceptting rules...", args);
+  log.info("trimester id: ", args.trimester._id.id);
   // Tell the Rules view that rules has been accepted without validation. This is the best for User Experience.
   console.log("Angelo");
-  event.reply('rules-accepted', {});
+  event.reply("rules-accepted", {});
   console.log("Angelo 2");
   if (args.userDomain.toLowerCase() === "intec") {
     await queries.addStudent({
@@ -237,11 +300,22 @@ ipcMain.on('add-student-to-history', async (event, args) => {
       intecId: args.userName,
       fullName: args.userName,
       computer: os.hostname(),
-      room: '',
+      room: "",
       createdAt: Date.now(),
-      teacher: (!!args.selectedData && !!args.selectedData.teacher) ? args.selectedData.teacher : '',
-      subject: (!!args.selectedData && !!args.selectedData.subject) ? args.selectedData.subject : '',
-      section: (!!args.selectedData && !!args.selectedData.section && !!args.selectedData.section != 0) ? args.selectedData.section : '',
+      teacher:
+        !!args.selectedData && !!args.selectedData.teacher
+          ? args.selectedData.teacher
+          : "",
+      subject:
+        !!args.selectedData && !!args.selectedData.subject
+          ? args.selectedData.subject
+          : "",
+      section:
+        !!args.selectedData &&
+        !!args.selectedData.section &&
+        !!args.selectedData.section != 0
+          ? args.selectedData.section
+          : "",
       trimesterName: args.trimester.name,
       trimesterId: mongoose.Types.ObjectId(args.trimester._id.id),
       domain: args.userDomain,
@@ -253,9 +327,9 @@ ipcMain.on('add-student-to-history', async (event, args) => {
       intecId: args.userName,
       fullName: args.userName,
       computer: os.hostname(),
-      room: '',
+      room: "",
       createdAt: Date.now(),
-      subject: '',
+      subject: "",
       trimesterName: args.trimester.name,
       trimesterId: mongoose.Types.ObjectId(args.trimester._id.id),
       domain: args.userDomain,

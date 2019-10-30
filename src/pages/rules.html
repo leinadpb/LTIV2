@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Rules - LABTI</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
     <link rel="stylesheet" href="./styles/rules.css" />
   </head>
   <body>
@@ -15,38 +14,64 @@
         <ol class="rules-listing" id="rules-container"></ol>
       </div>
       <div class="bottom-wrapper">
-        <div class="custom-select"> 
+        <div class="custom-select">
           <label for="subject" class="Form-subject">Materia:</label>
-          <select name="subject" id="subject-list" class="form-control custom-input">
+          <select
+            name="subject"
+            id="subject-list"
+            class="form-control custom-input"
+          >
             <option value="-1" selected>Seleccione...</option>
           </select>
-    
+
           <label for="teacher" class="Form-teacher">Profesor:</label>
-          <select name="teacher" id="teacher-list" class="form-control custom-input " disabled=true></select>
-    
+          <select
+            name="teacher"
+            id="teacher-list"
+            class="form-control custom-input "
+            disabled="true"
+          ></select>
+
           <label for="seccion" class="Form-seccion">Sección:</label>
-          <select name="seccion" id="section-list" class="form-control custom-input">
+          <select
+            name="seccion"
+            id="section-list"
+            class="form-control custom-input"
+          >
             <option value="0"></option>
-            <option value="1">1</option> 
-            <option value="2">2</option> 
+            <option value="1">1</option>
+            <option value="2">2</option>
             <option value="3">3</option>
-            <option value="4">4</option> 
+            <option value="4">4</option>
             <option value="5">5</option>
           </select>
         </div>
         <div class="submit-btn-wrapper">
-            <button onclick="startAccepting(event)" class="submit-btn" id="accept-button">Aceptar</button>
-            <img width="100px" height="80px" id="loading-gif" src="../../public/images/loading-gif.gif" alt="INTEC | Loading gif image" style="display: none" />
+          <button
+            onclick="startAccepting(event)"
+            class="submit-btn"
+            id="accept-button"
+          >
+            Aceptar
+          </button>
+          <img
+            width="100px"
+            height="80px"
+            id="loading-gif"
+            src="../../public/images/loading-gif.gif"
+            alt="INTEC | Loading gif image"
+            style="display: none"
+          />
         </div>
       </div>
     </div>
 
     <script>
       let windowData = undefined;
-      const ipcRenderer = require('electron').ipcRenderer;
-      ipcRenderer.send('rules-window-data-request', {});
+      const ipcRenderer = require("electron").ipcRenderer;
+      ipcRenderer.send("rules-window-data-request", {});
 
-      ipcRenderer.on('rules-window-data', (event, args) => {
+      ipcRenderer.on("rules-window-data", (event, args) => {
         console.log(args);
         windowData = args;
         if (!!windowData) {
@@ -56,31 +81,40 @@
           setSubjects(windowData.subjects);
         }
       });
-      ipcRenderer.on('rules-accepted', (event, args) => {
-        console.log('Rules acceped!');
+      ipcRenderer.on("rules-accepted", (event, args) => {
+        console.log("Rules acceped!");
         window.close();
-      })
+      });
 
-      const acceptRules = (selectedData) => {
+      const acceptRules = selectedData => {
         if (!!windowData) {
           console.log(windowData);
-          ipcRenderer.send('add-student-to-history', { userName:  windowData.user.username, userDomain: windowData.user.domain, trimester: windowData.trimester, selectedData: selectedData });
+          ipcRenderer.send("add-student-to-history", {
+            userName: windowData.user.username,
+            userDomain: windowData.user.domain,
+            trimester: windowData.trimester,
+            selectedData: selectedData
+          });
         } else {
-          console.log('WindowData not defined');
+          console.log("WindowData not defined");
         }
-      }
+      };
       function startAccepting(event) {
-        console.log('will start...');
-        let acceptButton = document.getElementById('accept-button');
-        acceptButton.style.display = 'none';
-        let loading = document.getElementById('loading-gif');
-        loading.style.display = 'block';
+        console.log("will start...");
+        let acceptButton = document.getElementById("accept-button");
+        acceptButton.style.display = "none";
+        let loading = document.getElementById("loading-gif");
+        loading.style.display = "block";
         // get data
-        let subjectValue = document.getElementById('subject-list').value;
-        let teacherValue = document.getElementById('teacher-list').value;
-        let sectionValue = document.getElementById('section-list').value;
-        let selectedData = {subject: subjectValue, teacher: teacherValue, section: sectionValue};
-        console.log('Selected data: >>>>> ', selectedData);
+        let subjectValue = document.getElementById("subject-list").value;
+        let teacherValue = document.getElementById("teacher-list").value;
+        let sectionValue = document.getElementById("section-list").value;
+        let selectedData = {
+          subject: subjectValue,
+          teacher: teacherValue,
+          section: sectionValue
+        };
+        console.log("Selected data: >>>>> ", selectedData);
         // Validate data
 
         // Accept rules
@@ -89,17 +123,17 @@
         }, 1500);
       }
       function setRules(rules) {
-        let rulesContainer = document.getElementById('rules-container');
+        let rulesContainer = document.getElementById("rules-container");
         rules.forEach(r => {
-          let element = document.createElement('li');
+          let element = document.createElement("li");
           element.innerHTML = r.text;
           rulesContainer.appendChild(element);
-        })
+        });
       }
       function setSubjects(subjects) {
-        let subjectList = document.getElementById('subject-list');
+        let subjectList = document.getElementById("subject-list");
         subjects.forEach(s => {
-          let element = document.createElement('option');
+          let element = document.createElement("option");
           element.value = s.code;
           element.innerHTML = s.name;
           subjectList.appendChild(element);
@@ -108,31 +142,33 @@
           console.log(subjectList.value);
           if (subjectList.value !== "-1") {
             // Fetch teachers and enable their selections
-            let filteredSubjects = subjects.filter(s => s.code === subjectList.value);
+            let filteredSubjects = subjects.filter(
+              s => s.code === subjectList.value
+            );
             let teachers = [];
             filteredSubjects.forEach(fs => {
-              let subTeachers = fs.teacherAssigned.split(';');
+              let subTeachers = fs.teacherAssigned.split(";");
               subTeachers.forEach(st => {
                 teachers.push(st);
-              })
-            })
+              });
+            });
             console.log(filteredSubjects);
             console.log(teachers);
             if (!!teachers) {
               setTeachers(teachers);
             }
           }
-        })
+        });
       }
       function setTeachers(teachers) {
-        let teacherList = document.getElementById('teacher-list');
+        let teacherList = document.getElementById("teacher-list");
         teacherList.disabled = false;
         // Clean list
         while (teacherList.firstChild) {
           teacherList.removeChild(teacherList.firstChild);
         } // End cleaning
         teachers.forEach(t => {
-          let element = document.createElement('option');
+          let element = document.createElement("option");
           element.value = t;
           element.innerHTML = t;
           teacherList.appendChild(element);
